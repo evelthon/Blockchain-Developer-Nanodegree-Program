@@ -82,9 +82,9 @@ class Blockchain {
     }
 
     // get block
-    getBlock(blockHeight) {
+    async getBlock(blockHeight) {
         // return object as a single string
-        return JSON.parse(JSON.stringify(this.chain[blockHeight]));
+        return JSON.parse(await l_DB.getBlock(blockHeight));
     }
 
     // validate block
