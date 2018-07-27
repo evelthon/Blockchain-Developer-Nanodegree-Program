@@ -7,42 +7,65 @@ const chainDB = './chaindata';
 const db = level(chainDB);
 
 var exports = module.exports = {};
-exports.addBlock = function(key, value){
-    db.put(key, value, function(err) {
-        if (err) return console.log('Block ' + key + ' submission failed', err);
-    })
+exports.addBlock = function (key, value) {
+    return new Promise(function (resolve, reject) {
+        db.put(key, value, function (err) {
+            if (err) reject('Block ' + key + ' submission failed', err);
+            resolve('Added block ' + key + ' to the chain');
+        })
+    });
+
+
 };
 
 exports.getMaxHeight = function () {
     // var options = {start:'key1', end: 'key9'};
     // var readStream = db.createKeyStream(options);
-    let maxHeight = 0;
-    let keyStream = db.createKeyStream();
-    keyStream.on('data', function(data) {
-        // each key/value is returned as a 'data' event
-        data = parseInt(data);
-        if(data > maxHeight)
+    return new Promise(function (resolve, reject) {
+        let maxHeight = 0;
+        let keyStream = db.createKeyStream();
+        keyStream.on('data', function (data) {
+            // When new data arrive compare value to locate max value.
+            // KeyStream returns string type. Convert to int to compare.
+            // console.log(typeof data);
+            data = parseInt(data);
+            // console.log(typeof data);
+            if (data > maxHeight)
                 maxHeight = data;
-        console.log('Key is = ' + data);
+            // console.log('Key is = ' + data);
+        })
+            .on('error', function(err) {
+                reject(err);
+            })
+            .on('close', function () {
+                //When the stream is finished, return found max height.
+                console.log('Type of maxHeight: ' + typeof maxHeight);
+                console.log('returning maxHeight as ' + typeof maxHeight + ' ' + maxHeight);
+                resolve(maxHeight);
+            });
     });
 
-    return maxHeight;
 }
 
-exports.getBlock function (k){
-    db.get(key, function(err, value) {
-        if (err) return console.log('Not found!', err);
-        console.log('Value = ' + value);
-
-        return value;
+exports.getBlock = function (key) {
+    return new Promise(function (resolve, reject) {
+        db.get(key, function (err, value) {
+            if (err) reject('Block ' + key + ' not found!');
+            // console.log('Value = ' + value);
+            // console.log(typeof  value);
+            // console.log(typeof JSON.parse(value));
+            resolve(value);
+        })
     })
+
 }
 
-function getBlockHeight(){}
+function getBlockHeight() {
+}
 
-exports.getChain = function(){
+exports.getChain = function () {
     let readStream = db.createReadStream();
-    readStream.on('data', function(data) {
+    readStream.on('data', function (data) {
         console.log('Key = ' + data.key + ' Value = ' + data.value);
     })
 }
