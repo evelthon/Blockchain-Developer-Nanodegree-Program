@@ -1,3 +1,6 @@
+//Include LevelDB helper functions
+const l_DB = require('./leveldbfunctions.js');
+
 /* ===== SHA256 with Crypto-js ===============================
 |  Learn more: Crypto-js: https://github.com/brix/crypto-js  |
 |  =========================================================*/
@@ -26,23 +29,28 @@ class Block{
 class Blockchain{
   constructor(){
     this.chain = [];
-    this.addBlock(new Block("First block in the chain - Genesis block"));
+    // this.addBlock(new Block("First block in the chain - Genesis block"));
+      let mHeight = l_DB.getMaxHeight();
+      console.log(mHeight);
+
+      l_DB.getChain();
   }
 
   // Add new block
   addBlock(newBlock){
     // Block height
-    newBlock.height = this.chain.length;
+    newBlock.height = l_DB.getMaxHeight() + 1;
     // UTC timestamp
     newBlock.time = new Date().getTime().toString().slice(0,-3);
     // previous block hash
-    if(this.chain.length>0){
-      newBlock.previousBlockHash = this.chain[this.chain.length-1].hash;
-    }
+    // if(this.chain.length>0){
+    //   newBlock.previousBlockHash = this.chain[this.chain.length-1].hash;
+    // }
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
     // Adding block object to chain
-  	this.chain.push(newBlock);
+  	// this.chain.push(newBlock);
+      l_DB.addBlock(newBlock.height, JSON.stringify(newBlock));
   }
 
   // Get block height
