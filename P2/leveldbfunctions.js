@@ -7,6 +7,8 @@ const chainDB = './chaindata';
 const db = level(chainDB);
 
 var exports = module.exports = {};
+
+//Add block
 exports.addBlock = function (key, value) {
     return new Promise(function (resolve, reject) {
         db.put(key, value, function (err) {
@@ -18,54 +20,37 @@ exports.addBlock = function (key, value) {
 
 };
 
+//get Block height
 exports.getMaxHeight = function () {
-    // var options = {start:'key1', end: 'key9'};
-    // var readStream = db.createKeyStream(options);
     return new Promise(function (resolve, reject) {
-        let maxHeight = 0;
+        let chainLength = 0;
         let keyStream = db.createKeyStream();
         keyStream.on('data', function (data) {
-            // When new data arrive compare value to locate max value.
-            // KeyStream returns string type. Convert to int to compare.
-            // console.log(typeof data);
-            data = parseInt(data);
-            // console.log(typeof data);
-            if (data > maxHeight)
-                maxHeight = data;
-            // console.log('Key is = ' + data);
+            chainLength += 1;
         })
             .on('error', function(err) {
                 reject(err);
             })
             .on('close', function () {
                 //When the stream is finished, return found max height.
-                console.log('Type of maxHeight: ' + typeof maxHeight);
-                console.log('returning maxHeight as ' + typeof maxHeight + ' ' + maxHeight);
-                resolve(maxHeight);
+                resolve(chainLength);
             });
     });
 
 }
 
+
+//Get block
 exports.getBlock = function (key) {
+    // key = key.toString()
     return new Promise(function (resolve, reject) {
         db.get(key, function (err, value) {
             if (err) reject('Block ' + key + ' not found!');
-            // console.log('Value = ' + value);
-            // console.log(typeof  value);
-            // console.log(typeof JSON.parse(value));
-            resolve(value);
+            // console.log('LEVEL Value = ' + value);
+            // console.log("LEVEL " + typeof  value);
+            // console.log("LEVEL " + typeof JSON.parse(value));
+            resolve(value);//returns a string
         })
     })
 
-}
-
-function getBlockHeight() {
-}
-
-exports.getChain = function () {
-    let readStream = db.createReadStream();
-    readStream.on('data', function (data) {
-        console.log('Key = ' + data.key + ' Value = ' + data.value);
-    })
 }
