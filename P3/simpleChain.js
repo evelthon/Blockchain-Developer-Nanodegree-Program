@@ -157,6 +157,7 @@ setTimeout(function () {
     blockchain.validateChain().then;
 }, 2500)
 
+
 //Export the class
 module.exports = Blockchain
 
