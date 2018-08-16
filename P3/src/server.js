@@ -37,7 +37,8 @@ server.route({
             '0';
 
         console.log(chain.getBlock(0))
-        return `fetching block ${bid}`;
+        // return `fetching block ${bid}`;
+        return chain.getBlock(bid)
     }
 });
 
