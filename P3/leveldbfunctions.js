@@ -45,7 +45,21 @@ exports.getBlock = function (key) {
     // key = key.toString()
     return new Promise(function (resolve, reject) {
         db.get(key, function (err, value) {
-            if (err) reject('Block ' + key + ' not found!');
+            // if (err) reject('Block ' + key + ' not found!');
+            if (err) {
+                if (err.notFound) {
+                    /*  handle a 'NotFoundError' here. The following JSON value is returned
+                    if key is not found. Specifically height is -1 and body text is "Not found"
+                        {"hash":"","height":-1,"body":"Not found","time":"","previousBlockHash":""}
+                     */
+                    let notFoundObj = {"hash":"","height":-1,"body":"Not found","time":"","previousBlockHash":""};
+                    let json = JSON.stringify(notFoundObj);
+                    resolve(json);
+                }
+
+                reject('Block ' + key + ' not found!');
+            }
+
             // console.log('LEVEL Value = ' + value);
             // console.log("LEVEL " + typeof  value);
             // console.log("LEVEL " + typeof JSON.parse(value));
