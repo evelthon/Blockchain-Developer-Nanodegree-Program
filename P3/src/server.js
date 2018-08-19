@@ -56,21 +56,10 @@ server.route({
         //get value from json data
         const payloadBody = blockPayload.body;
 
-
         let newBlockHeight = await chain.addBlock(new cBlock(payloadBody));
         console.log("New height is " + newBlockHeight);
+        return chain.getBlock(newBlockHeight);
 
-        //Separate Block class and import
-        //block must be parsed to addBlock
-        // chain.addBlock(newBlock(""));
-
-        console.log("POsting!!")
-        console.log(blockPayload)
-        console.log(request.payload)
-        console.log(blockPayload.body)
-
-        //Must returned the added json data
-        return `Posting finished`;
     }
 });
 
