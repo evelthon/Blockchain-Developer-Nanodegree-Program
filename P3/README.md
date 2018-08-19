@@ -1,6 +1,6 @@
-# RESTful Web API with Node.js Framework
+# RESTful Web API with Node.js Framework and hapi.js
 
-The project goal is to build a RESTful API using a Node.js framework that will interface with our private blockchain. The endpoints are created using hapi.
+The project goal is to build a RESTful API using a Node.js framework that will interface with our private blockchain. 
 The API service runs on port 8000. The default URL uses localhost for connectivity (http://localhost:8000).
 
 ## Getting Started
