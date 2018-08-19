@@ -8,19 +8,10 @@ const l_DB = require('./leveldbfunctions.js');
 const SHA256 = require('crypto-js/sha256');
 
 
-/* ===== Block Class ==============================
-|  Class with a constructor for block 			   |
-|  ===============================================*/
+//Import Block class and instantiate
+const cBlock = require('./block.js');
+// const block = new cBlock();
 
-class Block {
-    constructor(data) {
-        this.hash = "",
-            this.height = 0,
-            this.body = data,
-            this.time = 0,
-            this.previousBlockHash = ""
-    }
-}
 
 /* ===== Blockchain Class ==========================
 |  Class with a constructor for new blockchain 		|
@@ -32,7 +23,7 @@ class Blockchain {
             // console.log("Constructor height is " + height);
             if (height === 0) {
                 // this.addBlock(new Block("Genesis Block")).then(() => console.log("Genesis Block created."))
-                this.addBlock(new Block("Genesis block")).then(() => console.log("Genesis block created."))
+                this.addBlock(new cBlock("Genesis block")).then(() => console.log("Genesis block created."))
             }
         })
 
@@ -63,6 +54,8 @@ class Blockchain {
         await l_DB.addBlock(newBlock.height, JSON.stringify(newBlock));
 
         console.log("Added Block #" + newBlock.height + " w/ hash " + newBlock.hash + " (previous hash: " + newBlock.previousBlockHash + ")");
+
+        return newBlock.height;
     }
 
     // Get block height
@@ -143,7 +136,7 @@ let blockchain = new Blockchain();
 //Add 20 blocks
 (function theLoop(i) {
     setTimeout(function () {
-        blockchain.addBlock(new Block("Block " + i)).then(() =>{
+        blockchain.addBlock(new cBlock("Block " + i)).then(() =>{
             if (--i) theLoop(i);
         })
     }, 100);
