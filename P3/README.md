@@ -31,7 +31,7 @@ After successful execution you should end up with:
 ### You should now have two REST endpoints:
  - GET /block/{block_id} will return block information in json format. 
     - If block_id is omitted, the Genesis Block is returned.
-    - If block_id does not exist, this is displayed in the returned result set like so
+    - If block_id does not exist, this is displayed in the returned result set like so:
      ```
     hash	""
     height	-1
