@@ -29,6 +29,7 @@ server.route({
 /*
 Request block with block ID
 If the block ID is omitted, return genesis block.
+If block ID does not exist, return error message to user.
  */
 server.route({
     method:'GET',
@@ -45,7 +46,7 @@ server.route({
     }
 });
 
-//POST block (add new block)
+//POST block (add new block) w/ request body
 server.route({
     method:'POST',
     path:'/block',
