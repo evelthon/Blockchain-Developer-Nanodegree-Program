@@ -40,7 +40,7 @@ server.route({
             encodeURIComponent(request.params.block_id) :
             '0';
 
-        console.log(chain.getBlock(0))
+        // console.log(chain.getBlock(0))
         // return `fetching block ${bid}`;
         return chain.getBlock(bid)
     }
@@ -58,7 +58,7 @@ server.route({
         const payloadBody = blockPayload.body;
 
         let newBlockHeight = await chain.addBlock(new cBlock(payloadBody));
-        console.log("New height is " + newBlockHeight);
+        // console.log("New height is " + newBlockHeight);
         return chain.getBlock(newBlockHeight);
 
     }
