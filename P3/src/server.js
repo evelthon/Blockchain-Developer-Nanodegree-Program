@@ -9,10 +9,19 @@ const cBlock = require('../block.js');
 
 const Hapi=require('hapi');
 
-// Create a server with a host and port
-const server=Hapi.server({
-    host:'localhost',
-    port:8000
+//define server creation constants
+const DEFAULT_HOST = "localhost";
+const DEFAULT_PORT = 8000;
+const RADIX = 10;
+
+/*
+ Create a server with a host and port using environment variables
+ P3_HOST and P3_PORT. If not found, default to DEFAULT_HOST and DEFAULT_PORT.
+  */
+const server = Hapi.server({
+    host: process.env.P3_HOST || DEFAULT_HOST,
+    port: parseInt(process.env.P3_PORT, RADIX) || DEFAULT_PORT
+    // app: {}
 });
 
 // Add the route
