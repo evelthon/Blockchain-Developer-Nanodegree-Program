@@ -134,13 +134,13 @@ class Blockchain {
 let blockchain = new Blockchain();
 
 //Add 20 blocks
-(function theLoop(i) {
-    setTimeout(function () {
-        blockchain.addBlock(new cBlock("Block " + i)).then(() =>{
-            if (--i) theLoop(i);
-        })
-    }, 100);
-})(20);
+// (function theLoop(i) {
+//     setTimeout(function () {
+//         blockchain.addBlock(new cBlock("Block " + i)).then(() =>{
+//             if (--i) theLoop(i);
+//         })
+//     }, 100);
+// })(20);
 
 //Validate chain
 
