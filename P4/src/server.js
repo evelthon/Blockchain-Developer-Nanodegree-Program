@@ -36,6 +36,16 @@ server.route({
 });
 
 /*
+Validate User request /requestValidation
+@request wallet address
+@response wallet address, request timestamp, message, validation window
+ */
+server.route({
+    method:'POST',
+    path:'/requestValidation'
+})
+
+/*
 Request block with block ID
 If the block ID is omitted, return genesis block.
 If block ID does not exist, return error message to user.
