@@ -7,6 +7,10 @@ const chain = new bChain();
 //Import Block class and instantiate
 const cBlock = require('../block.js');
 
+//Include Star helper functions
+// const sFunctions = require('../starfunctions');
+// const starfuncs = new sFunctions();
+
 const Hapi=require('hapi');
 
 //define server creation constants
@@ -42,7 +46,25 @@ Validate User request /requestValidation
  */
 server.route({
     method:'POST',
-    path:'/requestValidation'
+    path:'/requestValidation',
+    handler:function(request,h) {
+        const payload = request.payload;
+        console.log(payload);
+
+        //get wallet address
+        const walletAddress = payload.address;
+        console.log(walletAddress);
+
+        let responseData = chain.createRequest(walletAddress)
+
+        // console.log('Route respons:');
+        // console.log(responseData);
+
+        //get value from json data
+        // const payloadBody = blockPayload.body;
+        // const wallet_address =
+        return responseData
+    }
 })
 
 /*
