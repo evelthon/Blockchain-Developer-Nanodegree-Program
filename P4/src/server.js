@@ -7,9 +7,9 @@ const chain = new bChain();
 //Import Block class and instantiate
 const cBlock = require('../block.js');
 
-//Include Star helper functions
-// const sFunctions = require('../starfunctions');
-// const starfuncs = new sFunctions();
+//Include LevelDB helper functions
+const levelDB = require('../leveldbfunctions.js');
+const l_DB =  new levelDB()
 
 const Hapi=require('hapi');
 
@@ -64,6 +64,45 @@ server.route({
         // const payloadBody = blockPayload.body;
         // const wallet_address =
         return responseData
+    }
+})
+
+/*
+Allow User Message Signature
+@request walletAddress, messageSignature
+@response
+
+-- test message --
+1CSDLKAsvNgVKNYKkoWn8vNkGcZq7A6XH:1537521536184:starRegistry
+-- test address --
+1CSDLKAsvNgVKNYKkoWn8vNkGcZq7A6XH
+-- test signature --
+IFDKOa8IOi7rdZs8LAC4xZaeiZy+CN43cj/A06a0gyvDIHN/evVbzJYSTs5qUzWEponv9d5qh8OPAbAVUKm+t2M=
+
+ */
+server.route({
+    method:'POST',
+    path:'/message-signature/validate',
+    handler:async function(request,h) {
+        const payload = request.payload;
+        console.log(payload);
+
+        //get wallet address and message signature
+        const walletAddress = payload.address;
+        const signature = payload.signature;
+        console.log(walletAddress);
+
+        // let responseData = l_DB.validateSignature(walletAddress, signature);
+        // console.log('Route response:' + responseData);
+
+        let requestData = null;
+        try {
+            requestData = await  l_DB.validateSignature(walletAddress, signature);
+            return h.response(requestData).code(200)
+        } catch (e) {
+            requestData = 'Unable to verify signature. Session expired after 5 minutes. Re-start the process.'
+            return h.response(requestData).code(404)
+        }
     }
 })
 
