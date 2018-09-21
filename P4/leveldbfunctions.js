@@ -6,6 +6,11 @@ const level = require('level');
 const chainDB = './chaindata';
 const db = level(chainDB);
 
+const bitcoinMessage = require('bitcoinjs-message');
+
+//Ability to define timeout centrally
+const MINUTES = 5
+
 // var exports = module.exports = {};
 class LevelFunctions {
     constructor(req) {
@@ -109,7 +114,8 @@ class LevelFunctions {
             console.log(data)
             db.put(addr, JSON.stringify(data), function (err) {
                 if (err) reject('Block ' + key + ' submission failed', err);
-                resolve('Added star ' + addr + ' to the chain');
+                // resolve('Added star ' + addr + ' to the chain');
+                resolve(data);
             })
         });
     }
@@ -126,33 +132,7 @@ class LevelFunctions {
         });
     }
 
-    //create new request
-  /*  async createNewRequest(addr) {
-        let timestamp = Date.now();
-        let validationWindow = 300; //5 minutes
-        let message = `${addr}:${timestamp}:starRegistry`;
 
-        let data = {
-            "address": addr,
-            "requestTimeStamp": timestamp,
-            "message": message,
-            "validationWindow": validationWindow
-        }
-        // stringify data
-        console.log('calling put')
-        console.log(data.address);
-        console.log(data)
-        db.put(data.address, data, function (err) {
-            // if (err) reject('Block ' + key + ' submission failed', err);
-            // resolve('Added block ' + key + ' to the chain');
-        })
-
-        console.log('getting back');
-        db.get(addr, function (err, value) {
-            console.log(value.address)
-        })
-    }
-    */
 
     //Get outstanding request
     async getExistingRequest(addr) {
@@ -173,8 +153,8 @@ class LevelFunctions {
                 }
 
                 value = JSON.parse(value);
-                let minutes = 1;
-                let xMinutes = minutes * 60 * 1000;
+
+                let xMinutes = MINUTES * 60 * 1000;
                 let xMinutesBeforeNow = Date.now() - xMinutes;
 
                 const isExpired = value.requestTimeStamp < xMinutesBeforeNow
@@ -218,6 +198,78 @@ class LevelFunctions {
                 }
 
 
+            })
+        });
+    }
+
+
+    //Validate signature
+    /*
+    let address = '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ'
+let signature = 'IJtpSFiOJrw/xYeucFxsHvIRFJ85YSGP8S1AEZxM4/obS3xr9iz7H0ffD7aM2vugrRaCi/zxaPtkflNzt5ykbc0='
+let message = '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532330740:starRegistry'
+
+console.log(bitcoinMessage.verify(message, address, signature))
+
+JSON response
+{
+  "registerStar": true,
+  "status": {
+    "address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ",
+    "requestTimeStamp": "1532296090",
+    "message": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532296090:starRegistry",
+    "validationWindow": 193,
+    "messageSignature": "valid"
+  }
+}
+     */
+    async validateSignature(addr, signature) {
+        return new Promise(function (resolve, reject) {
+            db.get(addr, function (err, value) {
+                if (err) {
+                    if (err.notFound) {
+                        return reject('Address not found')
+                    }
+                    // console.log('Rejecting');
+                    return reject('Error: ' + err);
+                }
+
+                value = JSON.parse(value);
+
+                let minutes = 1;
+                let xMinutes = minutes * 60 * 1000;
+                let xMinutesBeforeNow = Date.now() - xMinutes;
+
+                const isExpired = value.requestTimeStamp < xMinutesBeforeNow
+
+                let isValidMessage = false;
+
+                if (isExpired) {
+                    //if expired, restart process
+                    value.validationWindow = 0
+                    value.messageSignature = 'expired'
+                    console.log('Unable to verify signature. Session expired after ' + MINUTES + 'minutes.');
+                    return reject('User session expired after 5 minutes');
+                    // return;
+                } else {
+                    console.log('Message signature is not expired.');
+                    value.validationWindow = Math.floor((value.requestTimeStamp - xMinutesBeforeNow) / 1000)
+
+                    if (bitcoinMessage.verify(value.message, addr, signature)) {
+                        isValidMessage = true;
+                    }
+
+                    value.messageSignature = isValidMessage ? 'valid' : 'invalid';
+
+                    db.put(addr, JSON.stringify(value));
+
+                    // construct successful return message
+                    const returnData = {
+                        registerStar : !isExpired && isValidMessage,
+                        status: value
+                    }
+                    return resolve(returnData);
+                }
             })
         });
     }
