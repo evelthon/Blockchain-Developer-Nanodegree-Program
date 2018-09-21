@@ -47,7 +47,7 @@ Validate User request /requestValidation
 server.route({
     method:'POST',
     path:'/requestValidation',
-    handler:function(request,h) {
+    handler:async function(request,h) {
         const payload = request.payload;
         console.log(payload);
 
@@ -55,15 +55,26 @@ server.route({
         const walletAddress = payload.address;
         console.log(walletAddress);
 
-        let responseData = chain.createRequest(walletAddress)
+        // let responseData = await chain.createRequest(walletAddress)
 
-        // console.log('Route respons:');
-        // console.log(responseData);
+
+        let requestData = null;
+        try {
+            requestData = await l_DB.getExistingRequest(walletAddress);
+        } catch (e) {
+            console.log('Caught exception - Wallet address not found')
+            requestData = await l_DB.handleUserRequest(walletAddress);
+        }
+
+        return h.response(requestData).code(200)
+
+
 
         //get value from json data
         // const payloadBody = blockPayload.body;
         // const wallet_address =
-        return responseData
+        // return responseData
+
     }
 })
 
@@ -98,11 +109,28 @@ server.route({
         let requestData = null;
         try {
             requestData = await  l_DB.validateSignature(walletAddress, signature);
+            //just for testing
+            // let testing = await l_DB.verifyAddedData(walletAddress);
+            // console.log('---------');
+            // console.log(testing);
+
             return h.response(requestData).code(200)
         } catch (e) {
             requestData = 'Unable to verify signature. Session expired after 5 minutes. Re-start the process.'
+
+            //just for testing
+            try {
+                let testing = await l_DB.verifyAddedData(walletAddress);
+                console.log('---------');
+                console.log(testing);
+            } catch (e) {
+                console.log(e)
+
+            }
+
             return h.response(requestData).code(404)
         }
+
     }
 })
 
@@ -127,11 +155,15 @@ server.route({
 });
 
 //POST block (add new block) w/ request body
+/*
+@param address (wallet address)
+@param star ( star details including coordinates and story)
+ */
 server.route({
     method:'POST',
     path:'/block',
     handler:async function(request,h) {
-;
+        ;
         const blockPayload = request.payload;
 
         //get value from json data
