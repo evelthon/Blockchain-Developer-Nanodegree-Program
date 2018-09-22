@@ -88,6 +88,26 @@ class LevelFunctions {
 
     }
 
+    //Get block by hash
+    async getBlockByHash(hash) {
+        return new Promise(function (resolve, reject) {
+            db.createReadStream()
+                .on('data', function (data) {
+                    console.log(data.key, '=', data.value)
+                })
+                .on('error', function (err) {
+                    console.log('Oh my!', err)
+                })
+                .on('close', function () {
+                    console.log('Stream closed')
+                })
+                .on('end', function () {
+                    console.log('Stream ended')
+                })
+
+        })
+    }
+
     async handleUserRequest(addr) {
         return new Promise(function (resolve, reject) {
             /*
@@ -99,7 +119,7 @@ class LevelFunctions {
             - start new request
              */
             let timestamp = Date.now();
-            let validationWindow = 300; //5 minutes
+            let validationWindow = MINUTES * 60; //5 minutes
             let message = `${addr}:${timestamp}:starRegistry`;
 
             let data = {
@@ -126,7 +146,10 @@ class LevelFunctions {
                 if (err) {
                     reject('Wallet address ' + addr + ' not found!');
                 }
-                // console.log('Got: ' + value);
+                if(value === undefined) {
+                    reject ('Value undefined')
+                }
+                console.log('Got: ' + value);
                 resolve(value);
             })
         });
@@ -178,8 +201,15 @@ class LevelFunctions {
                 // }
 
                 if (isExpired) {
-                    //if expired, restart process
+                    //if expired, delete junk data and restart process
                     console.log('Got expired, save new request');
+
+                    db.del(addr, function (err) {
+                        if(err) {
+                            console.log('Error while deleting junk data')
+                        }
+                    })
+
                     reject('User session expired after 5 minutes');
                     return;
                 } else {
@@ -236,8 +266,7 @@ JSON response
 
                 value = JSON.parse(value);
 
-                let minutes = 1;
-                let xMinutes = minutes * 60 * 1000;
+                let xMinutes = MINUTES * 60 * 1000;
                 let xMinutesBeforeNow = Date.now() - xMinutes;
 
                 const isExpired = value.requestTimeStamp < xMinutesBeforeNow
@@ -247,8 +276,16 @@ JSON response
                 if (isExpired) {
                     //if expired, restart process
                     value.validationWindow = 0
-                    value.messageSignature = 'expired'
+                    value.messageSignature = 'invalid'
                     console.log('Unable to verify signature. Session expired after ' + MINUTES + 'minutes.');
+
+                    //delete junk data
+                    db.del(addr, function (err) {
+                        if(err) {
+                            console.log('Error while deleting junk data')
+                        }
+                    });
+
                     return reject('User session expired after 5 minutes');
                     // return;
                 } else {
@@ -274,9 +311,22 @@ JSON response
         });
     }
 
+    async isValidatedAddress(addr) {
+        return new Promise(function (resolve, reject) {
+            db.get(addr, function (err, value) {
+                if(err) {
+                    return reject('Invalid address');
+                }
 
+                if(value.messageSignature === 'valid') {
+                    return resolve('Validated Address');
+                } else {
+                    return reject('Non Validated Address');
+                }
 
-
+            })
+        });
+    }
 }
 
 //Export the class
