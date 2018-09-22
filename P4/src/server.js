@@ -9,7 +9,11 @@ const cBlock = require('../block.js');
 
 //Include LevelDB helper functions
 const levelDB = require('../leveldbfunctions.js');
-const l_DB =  new levelDB()
+const l_DB =  new levelDB();
+
+//Include general helper fuctions
+const helperFunctions = require('../helperfunctions');
+const l_Help = new helperFunctions();
 
 const Hapi=require('hapi');
 
@@ -158,20 +162,55 @@ server.route({
 /*
 @param address (wallet address)
 @param star ( star details including coordinates and story)
+
+payload:
+{"address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ","star": {
+		"dec": "-26° 29' 24.9",
+		"ra": "16h 29m 1.0s",
+		"story": "Found star using https://www.google.com/sky/"
+	}
+}
+
+body data include both address and star details.
  */
 server.route({
     method:'POST',
     path:'/block',
     handler:async function(request,h) {
-        ;
+        // console.log(request)
         const blockPayload = request.payload;
+        console.log(blockPayload)
 
+        let pdata =  JSON.parse(blockPayload);
         //get value from json data
-        const payloadBody = blockPayload.body;
+        // const payloadBody = blockPayload.body;
+        const address = pdata.address;
+        const star = pdata.star;
+        // console.log(payloadBody);
+        // console.log(address);
+        // console.log(star);
+        try{
+            l_Help.validStarData(star);
 
-        let newBlockHeight = await chain.addBlock(new cBlock(payloadBody));
-        // console.log("New height is " + newBlockHeight);
-        return chain.getBlock(newBlockHeight);
+            console.log(pdata.star.story)
+
+            //encode story to hex
+            pdata.star.story = new Buffer(pdata.star.story).toString('hex');
+
+            //TODO: save block only if signature validated
+            let newBlockHeight = await chain.addBlock(new cBlock(pdata));
+
+            //TODO: after saving block, delete junk data w/ wallet address as key
+
+            return h.response(await chain.getBlock(newBlockHeight)).code(201)
+        } catch (e) {
+            console.log(e);
+
+            return h.response(e).code(404)
+        }
+
+
+
 
     }
 });
