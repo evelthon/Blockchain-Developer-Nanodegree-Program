@@ -355,7 +355,7 @@ JSON response format
         return new Promise(function (resolve, reject) {
             ldb.get(addr, function (err, value) {
                 if(err) {
-                    return reject('Invalid address');
+                    return reject('Invalid address, unable to validate');
                 }
 
                 value = JSON.parse(value);
