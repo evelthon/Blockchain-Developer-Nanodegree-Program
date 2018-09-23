@@ -6,6 +6,10 @@ const level = require('level');
 const chainDB = './chaindata';
 const db = level(chainDB);
 
+//Store new requests separately
+const requestDB = './chaindata/request';
+const ldb = level(requestDB);
+
 const bitcoinMessage = require('bitcoinjs-message');
 
 //Ability to define timeout centrally
@@ -16,6 +20,8 @@ class LevelFunctions {
     constructor(req) {
         this.request = req;
     }
+
+
 
 //Add block
     async addBlock(key, value) {
@@ -72,16 +78,25 @@ class LevelFunctions {
                             "time": "",
                             "previousBlockHash": ""
                         };
-                        let json = JSON.stringify(notFoundObj);
-                        resolve(json);
+                        // let json = JSON.stringify(notFoundObj);
+                        return reject(notFoundObj);
                     }
 
-                    reject('Block ' + key + ' not found!');
+                    return reject('Block ' + key + ' not found!');
                 }
 
-                // console.log('LEVEL Value = ' + value);
-                // console.log("LEVEL " + typeof  value);
-                // console.log("LEVEL " + typeof JSON.parse(value));
+                console.log(value)
+                // if (value === undefined){
+                //     return reject('Block key not found');
+                // }
+
+                value = JSON.parse(value);
+                // console.log(value)
+                if (parseInt(key) > 0) {
+                    value.body.star.storyDecoded = new Buffer(value.body.star.story, 'hex').toString();
+                }
+
+
                 resolve(value);//returns a string
             })
         })
@@ -91,19 +106,63 @@ class LevelFunctions {
     //Get block by hash
     async getBlockByHash(hash) {
         return new Promise(function (resolve, reject) {
+            let block;
             db.createReadStream()
                 .on('data', function (data) {
                     console.log(data.key, '=', data.value)
+                    block = JSON.parse(data.value);
+                    // console.log(block)
+                    if (hash === block.hash) {
+                        console.log(block)
+                        block.body.star.storyDecoded = new Buffer(block.body.star.story, 'hex').toString();
+                        return resolve(block);
+                    }
                 })
                 .on('error', function (err) {
-                    console.log('Oh my!', err)
+                    return reject(err);
                 })
                 .on('close', function () {
-                    console.log('Stream closed')
+                    return reject('Hash not found');
                 })
-                .on('end', function () {
-                    console.log('Stream ended')
+                // .on('end', function () {
+                //     console.log('Stream ended')
+                // })
+
+        })
+    }
+
+    //Get block by address
+    async getBlockByAddress(addr) {
+        return new Promise(function (resolve, reject) {
+
+            let reply = [];
+            let block;
+            db.createReadStream()
+                .on('data', function (data) {
+                    console.log(data.key, '=', data.value)
+                    console.log('==================')
+                    block = JSON.parse(data.value);
+                    console.log(block)
+
+                    if (addr === block.body.address && block.body.address) {
+                        console.log('Found block address ' + addr);
+                        block.body.star.storyDecoded = new Buffer(block.body.star.story, 'hex').toString();
+                        // return resolve(block);
+                        reply.push(block);
+                    }
+
+                    console.log('----------')
                 })
+                .on('error', function (err) {
+                    return reject(err);
+                })
+                .on('close', function () {
+                    console.log(reply.length);
+                    return resolve(reply);
+                })
+            // .on('end', function () {
+            //     console.log('Stream ended')
+            // })
 
         })
     }
@@ -132,7 +191,7 @@ class LevelFunctions {
             console.log('calling put')
             console.log(data.address);
             console.log(data)
-            db.put(addr, JSON.stringify(data), function (err) {
+            ldb.put(addr, JSON.stringify(data), function (err) {
                 if (err) reject('Block ' + key + ' submission failed', err);
                 // resolve('Added star ' + addr + ' to the chain');
                 resolve(data);
@@ -160,7 +219,7 @@ class LevelFunctions {
     //Get outstanding request
     async getExistingRequest(addr) {
         return new Promise(function (resolve, reject) {
-            db.get(addr, function (err, value) {
+            ldb.get(addr, function (err, value) {
                 if (err) {
                     // if (err.notFound) {
                     //     /*  handle a 'NotFoundError' here. The following JSON value is returned
@@ -204,7 +263,7 @@ class LevelFunctions {
                     //if expired, delete junk data and restart process
                     console.log('Got expired, save new request');
 
-                    db.del(addr, function (err) {
+                    ldb.del(addr, function (err) {
                         if(err) {
                             console.log('Error while deleting junk data')
                         }
@@ -255,7 +314,7 @@ JSON response
      */
     async validateSignature(addr, signature) {
         return new Promise(function (resolve, reject) {
-            db.get(addr, function (err, value) {
+            ldb.get(addr, function (err, value) {
                 if (err) {
                     if (err.notFound) {
                         return reject('Address not found')
@@ -280,7 +339,7 @@ JSON response
                     console.log('Unable to verify signature. Session expired after ' + MINUTES + 'minutes.');
 
                     //delete junk data
-                    db.del(addr, function (err) {
+                    ldb.del(addr, function (err) {
                         if(err) {
                             console.log('Error while deleting junk data')
                         }
@@ -298,7 +357,7 @@ JSON response
 
                     value.messageSignature = isValidMessage ? 'valid' : 'invalid';
 
-                    db.put(addr, JSON.stringify(value));
+                    ldb.put(addr, JSON.stringify(value));
 
                     // construct successful return message
                     const returnData = {
@@ -313,11 +372,16 @@ JSON response
 
     async isValidatedAddress(addr) {
         return new Promise(function (resolve, reject) {
-            db.get(addr, function (err, value) {
+            ldb.get(addr, function (err, value) {
                 if(err) {
                     return reject('Invalid address');
                 }
 
+                // console.log('/// ' +  value)
+                // console.log('///\\\ ' + JSON.parse(value))
+                // console.log('without parse ' + value.messageSignature)
+                value = JSON.parse(value);
+                console.log('with parse ' + value.messageSignature)
                 if(value.messageSignature === 'valid') {
                     return resolve('Validated Address');
                 } else {
@@ -325,6 +389,24 @@ JSON response
                 }
 
             })
+        });
+    }
+
+    async invalidateRequest(addr) {
+        return new Promise(function (resolve, reject) {
+
+            //Invalidate initial request
+            console.log('Invalidating request for ' + addr);
+            ldb.del(addr, function (err) {
+                if(err) {
+                    console.log('Error while deleting junk data')
+                    return reject('Unable to invalidate request');
+                }
+                console.log('Record with address ' + addr + ' was deleted');
+                return resolve("Request invalidated");
+            })
+
+
         });
     }
 }
