@@ -1,5 +1,5 @@
 # Project4
-The project goal is to build a RESTful API using a Node.js to create a Private Blockchain Notary Service.
+The project goal is to to create a Private Blockchain Notary Service.
 
 The API service runs on port 8000. The default URL uses localhost for connectivity (http://localhost:8000).
 
