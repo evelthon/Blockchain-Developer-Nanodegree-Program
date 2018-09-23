@@ -21,13 +21,19 @@ npm install
 npm start
 ```
 
-After successful execution you should end up with:
- - A Genesis Block (#0)
- - 20 additional Blocks
- - A validation confirmation of the Blockchain
+After successful execution you should end up with a Genesis Block (#0)
+
+You are offered the following endpoints: 
+- POST /requestValidation ()
+- POST /message-signature/validate
+- POST /block
+- GET /stars/hash:[HASH]
+- GET /stars/address:[ADDRESS]
+- GET /block/[HEIGHT]
+
+ ![Screenshot](https://github.com/evelthon/Blockchain-Developer-Nanodegree-Program/tree/master/P4/readme_images/1.png )
  
- 
-### You should now have two REST endpoints:
+
  - GET /block/{block_id} will return block information in json format. 
     - If block_id is omitted, the Genesis Block is returned.
     - If block_id does not exist, this is displayed in the returned result set like so:
