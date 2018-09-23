@@ -62,7 +62,7 @@ address
 
 
 #### 2. Sign your message
-Use Ethereum to create a signature.
+Use Electrum to create a signature.
 
 ![2](https://user-images.githubusercontent.com/15610147/45930151-ceaed800-bf64-11e8-8cb7-6c362edafeed.png)
 
