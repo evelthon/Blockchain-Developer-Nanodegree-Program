@@ -184,17 +184,17 @@ server.route({
     path:'/block',
     handler:async function(request,h) {
 
-        console.log('POST add block');
+        // console.log('POST add block');
         const blockPayload = request.payload;
-        console.log(blockPayload)
+        // console.log(blockPayload)
 
         let pdata =  blockPayload;
         //get value from json data
         const address = pdata.address;
         const star = pdata.star;
         // console.log(payloadBody);
-        console.log(address);
-        console.log(star);
+        // console.log(address);
+        // console.log(star);
         //Check whether this address has validated signature
 
         try {
@@ -207,29 +207,26 @@ server.route({
             return h.response(data).code(404)
         }
 
-
-        console.log('Before validation of star data')
         try{
             l_Help.validStarData(star);
 
-            console.log('Story: ' + pdata.star.story)
-
             //encode story to hex
             pdata.star.story = new Buffer(pdata.star.story).toString('hex');
-            console.log('PDATA: ' + pdata.star.story)
 
             //TODO: save block only if signature validated
-            console.log*('Before addBlock()')
+
+
+            // console.log*('Before addBlock()')
             let newBlockHeight = await chain.addBlock(new cBlock(pdata));
 
             console.log('The newly added block got height ' + newBlockHeight)
 
             //after saving block, delete junk data w/ wallet address as key
-            // try {
-            //     await l_DB.invalidateRequest(address);
-            // } catch (e) {
-            //     console.log(e)
-            // }
+            try {
+                await l_DB.invalidateRequest(address);
+            } catch (e) {
+                console.log(e)
+            }
 
             return h.response(await chain.getBlock(newBlockHeight)).code(201)
         } catch (e) {
