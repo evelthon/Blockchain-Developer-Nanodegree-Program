@@ -18,7 +18,7 @@ npm install
 ```
 - Execute program
 ```
-node simpleChain.js
+node blockChain.js
 ```
 
 After successful execution you should end up with:
