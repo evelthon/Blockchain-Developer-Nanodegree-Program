@@ -1,5 +1,6 @@
-# TODO: Project4
-The project goal is to build a RESTful API using a Node.js framework that will interface with our private blockchain. 
+# Project4
+The project goal is to build a RESTful API using a Node.js to create a Private Blockchain Notary Service.
+
 The API service runs on port 8000. The default URL uses localhost for connectivity (http://localhost:8000).
 
 ## Getting Started
@@ -45,12 +46,6 @@ You are offered the following endpoints:
     previousBlockHash	""
     ```
 
-
-- POST /block with body data. The create block is returned in json format.
-    - Post block like: 
-    ```
-    curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body":"block body contents"}
-    ```
     
 ### Steps to add new Block (Star)
 #### 1. Post a validation request
