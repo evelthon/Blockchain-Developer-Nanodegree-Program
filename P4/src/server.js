@@ -168,7 +168,7 @@ server.route({
 /*
 @param address (wallet address)
 @param star ( star details including coordinates and story)
-
+:
 payload:
 {"address": "142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ","star": {
 		"dec": "-26° 29' 24.9",
@@ -188,7 +188,7 @@ server.route({
         const blockPayload = request.payload;
         console.log(blockPayload)
 
-        let pdata =  JSON.parse(blockPayload);
+        let pdata =  blockPayload;
         //get value from json data
         const address = pdata.address;
         const star = pdata.star;
