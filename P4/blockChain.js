@@ -1,5 +1,9 @@
 //Include LevelDB helper functions
-const l_DB = require('./leveldbfunctions.js');
+const levelDB = require('./leveldbfunctions.js');
+const l_DB =  new levelDB()
+
+
+
 
 /* ===== SHA256 with Crypto-js ===============================
 |  Learn more: Crypto-js: https://github.com/brix/crypto-js  |
@@ -31,27 +35,37 @@ class Blockchain {
 
     // Add new block
     async addBlock(newBlock) {
+        console.log('In blockChain.js - addBlock')
 
         //get max height
         let chainLength = await l_DB.getMaxHeight();
+        console.log(chainLength)
 
         // Block height
         newBlock.height = chainLength;
+        // newBlock.height = parseInt(chainLength, 10) - parseInt(2, 10);
 
         // UTC timestamp
         newBlock.time = new Date().getTime().toString().slice(0, -3);
 
         // previous block hash (Do not look for hash if Genesis block
         if (chainLength > 0) {
+            console.log('Chainlength is > 0')
+            console.log('Chainlength is ' + chainLength)
             let previousBlockHeight = parseInt(chainLength, 10) - parseInt(1, 10);
-            const previousBlock = JSON.parse(await l_DB.getBlock(previousBlockHeight));
+            console.log('Prev block height is ' + previousBlockHeight)
+            // const previousBlock = JSON.parse(await l_DB.getBlock(previousBlockHeight));
+            const previousBlock = await l_DB.getBlock(previousBlockHeight);
+            console.log('Previous block is ' + previousBlock)
             newBlock.previousBlockHash = previousBlock.hash;
         }
 
         // Block hash with SHA256 using newBlock and converting to a string
         newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
         // Adding block object to chain
+        console.log('Before l_DB AddBlock')
         await l_DB.addBlock(newBlock.height, JSON.stringify(newBlock));
+        console.log('After l_DB AddBlock')
 
         console.log("Added Block #" + newBlock.height + " w/ hash " + newBlock.hash + " (previous hash: " + newBlock.previousBlockHash + ")");
 
@@ -66,9 +80,30 @@ class Blockchain {
     // get block
     async getBlock(blockHeight) {
         // retrieve data from levelDB
+
+        // return('111')
         let retVal = await l_DB.getBlock(blockHeight)
         console.log(retVal);
-        return JSON.parse(retVal);
+       // return JSON.parse(retVal);
+        return retVal;
+    }
+
+
+    //get block by hash
+    async getBlockByHash(hash) {
+        //retrieve data from levelDB
+
+        const block = await l_DB.getBlockByHash(hash);
+
+        return block;
+
+    }
+
+    //get block by address
+    async getBlockByAddress(addr) {
+        //retrieve data from levelDB
+        const block = await l_DB.getBlockByAddress(addr)
+        return block;
     }
 
     // validate block
@@ -127,11 +162,18 @@ class Blockchain {
             console.log('No errors detected');
         }
     }
+
+
+
+
+
+
+
 }
 
 
 //Create Blockchain instance
-let blockchain = new Blockchain();
+// let blockchain = new Blockchain();
 
 //Add 20 blocks
 // (function theLoop(i) {
@@ -144,11 +186,11 @@ let blockchain = new Blockchain();
 
 //Validate chain
 
-setTimeout(function () {
-    console.log("-------");
-    console.log("Validating chain");
-    blockchain.validateChain().then;
-}, 2500)
+// setTimeout(function () {
+//     console.log("-------");
+//     console.log("Validating chain");
+//     blockchain.validateChain().then;
+// }, 2500)
 
 
 //Export the class
