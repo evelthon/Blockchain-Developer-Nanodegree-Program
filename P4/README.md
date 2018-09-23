@@ -34,7 +34,7 @@ You are offered the following endpoints:
  
  
 
- - GET /block/{block_id} will return block information in json format. 
+ - GET /block/{block_id} responds as follows: 
     - If block_id is omitted, the Genesis Block is returned.
     - If block_id does not exist, this is displayed in the returned result set like so:
      ```
@@ -54,31 +54,83 @@ You are offered the following endpoints:
     
 ### Steps to add new Block (Star)
 #### 1. Post a validation request
+Type
+```
+POST
+```
+Parameters
+```
+address
+```
 
 ![screenshot_20180923_185116](https://user-images.githubusercontent.com/15610147/45930163-dcfcf400-bf64-11e8-912a-10c032b318e5.png)
 
 
 #### 2. Sign your message
+Use Ethereum to create a signature.
+
 ![2](https://user-images.githubusercontent.com/15610147/45930151-ceaed800-bf64-11e8-8cb7-6c362edafeed.png)
 
 
 
 
 
+
 #### 3. Post a signature validation request
+Type
+```
+POST
+```
+Parameters
+```
+address
+signature
+```
 ![3](https://user-images.githubusercontent.com/15610147/45930152-ceaed800-bf64-11e8-85aa-72323f036afb.png)
 
 #### 4. Post Block data with star details
+Type
+```
+POST
+```
+Parameters
+```
+Block details including address and star details.
+```
 ![4](https://user-images.githubusercontent.com/15610147/45930153-ceaed800-bf64-11e8-9ed9-f926b1eb9089.png)
 
 
 
 ### To retrieve stored data
 #### 1. Get star block by hash
+Type
+```
+GET
+```
+Parameters
+```
+hash
+```
 ![5](https://user-images.githubusercontent.com/15610147/45930154-cf476e80-bf64-11e8-8fd2-59085b6ac393.png)
 #### 2. Get block by wallet address
+Type
+```
+GET
+```
+Parameters
+```
+address
+```
 ![6](https://user-images.githubusercontent.com/15610147/45930155-cf476e80-bf64-11e8-96f2-e69416c373ce.png)
 #### 3. Get block by height
+Type
+```
+GET
+```
+Parameters
+```
+height
+```
 ![7](https://user-images.githubusercontent.com/15610147/45930156-cf476e80-bf64-11e8-917b-4c8079e4c2d4.png)
 
 
