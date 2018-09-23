@@ -241,23 +241,9 @@ class LevelFunctions {
 
                 const isExpired = value.requestTimeStamp < xMinutesBeforeNow
 
-                // console.log('Date now is ' + Date.now());
-                // console.log('Value is' + value);
-                // console.log('xMinutes= ' + xMinutes/1000);
-                // console.log("xMinutesBefore " + xMinutesBeforeNow/1000);
                 console.log(value.requestTimeStamp)
                 console.log(xMinutesBeforeNow)
                 console.log(value.requestTimeStamp - xMinutesBeforeNow);
-                // console.log("isExpired " + isExpired);
-
-                // var lastTime = 0;
-
-                // if ( Math.floor((new Date() - lastTime)/60000) < 2 ) {
-                //     // get from variable
-                // } else {
-                //     // get from url
-                //     lastTime =  new Date();
-                // }
 
                 if (isExpired) {
                     //if expired, delete junk data and restart process
@@ -294,13 +280,8 @@ class LevelFunctions {
 
     //Validate signature
     /*
-    let address = '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ'
-let signature = 'IJtpSFiOJrw/xYeucFxsHvIRFJ85YSGP8S1AEZxM4/obS3xr9iz7H0ffD7aM2vugrRaCi/zxaPtkflNzt5ykbc0='
-let message = '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532330740:starRegistry'
 
-console.log(bitcoinMessage.verify(message, address, signature))
-
-JSON response
+JSON response format
 {
   "registerStar": true,
   "status": {
@@ -377,11 +358,8 @@ JSON response
                     return reject('Invalid address');
                 }
 
-                // console.log('/// ' +  value)
-                // console.log('///\\\ ' + JSON.parse(value))
-                // console.log('without parse ' + value.messageSignature)
                 value = JSON.parse(value);
-                console.log('with parse ' + value.messageSignature)
+
                 if(value.messageSignature === 'valid') {
                     return resolve('Validated Address');
                 } else {
