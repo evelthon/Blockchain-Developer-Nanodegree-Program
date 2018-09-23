@@ -31,7 +31,7 @@ You are offered the following endpoints:
 - GET /stars/address:[ADDRESS]
 - GET /block/[HEIGHT]
 
- ![Screenshot](https://github.com/evelthon/Blockchain-Developer-Nanodegree-Program/tree/master/P4/readme_images/1.png )
+ 
  
 
  - GET /block/{block_id} will return block information in json format. 
@@ -51,6 +51,10 @@ You are offered the following endpoints:
     ```
     curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body":"block body contents"}
     ```
+    
+### Steps to add new Block (Star)
+1. Post a validation request
+![screenshot_20180923_185116](https://user-images.githubusercontent.com/15610147/45929993-d9b43900-bf61-11e8-9e73-da9743fdcece.png)
  
  
  
