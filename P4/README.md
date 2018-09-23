@@ -48,6 +48,7 @@ You are offered the following endpoints:
 
     
 ### Steps to add new Block (Star)
+Content type should be set to application/json
 #### 1. Post a validation request
 Type
 ```
