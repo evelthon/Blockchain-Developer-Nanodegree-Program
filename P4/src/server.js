@@ -123,14 +123,14 @@ server.route({
             requestData = 'Unable to verify signature. Session expired after 5 minutes. Re-start the process.'
 
             //just for testing
-            try {
-                let testing = await l_DB.verifyAddedData(walletAddress);
-                console.log('---------');
-                console.log(testing);
-            } catch (e) {
-                console.log(e)
-
-            }
+            // try {
+            //     let testing = await l_DB.verifyAddedData(walletAddress);
+            //     console.log('---------');
+            //     console.log(testing);
+            // } catch (e) {
+            //     console.log(e)
+            //
+            // }
 
             return h.response(requestData).code(404)
         }
@@ -146,7 +146,7 @@ If block ID does not exist, return error message to user.
 server.route({
     method:'GET',
     path:'/block/{block_id?}',
-    handler:function(request,h) {
+    handler:async function(request,h) {
 
         const bid = request.params.block_id ?
             encodeURIComponent(request.params.block_id) :
@@ -154,7 +154,13 @@ server.route({
 
         // console.log(chain.getBlock(0))
         // return `fetching block ${bid}`;
-        return chain.getBlock(bid)
+        // return chain.getBlock(bid)
+
+        try{
+            return h.response(await chain.getBlock(bid)).code(200)
+        } catch (e) {
+            return h.response(e).code(404)
+        }
     }
 });
 
@@ -177,30 +183,53 @@ server.route({
     method:'POST',
     path:'/block',
     handler:async function(request,h) {
-        // console.log(request)
+
+        console.log('POST add block');
         const blockPayload = request.payload;
         console.log(blockPayload)
 
         let pdata =  JSON.parse(blockPayload);
         //get value from json data
-        // const payloadBody = blockPayload.body;
         const address = pdata.address;
         const star = pdata.star;
         // console.log(payloadBody);
-        // console.log(address);
-        // console.log(star);
+        console.log(address);
+        console.log(star);
+        //Check whether this address has validated signature
+
+        try {
+            const validated = await l_DB.isValidatedAddress(address)
+            // return h.response(e).code(404)
+        } catch (e) {
+            const data = {
+                response: e
+            }
+            return h.response(data).code(404)
+        }
+
+
+        console.log('Before validation of star data')
         try{
             l_Help.validStarData(star);
 
-            console.log(pdata.star.story)
+            console.log('Story: ' + pdata.star.story)
 
             //encode story to hex
             pdata.star.story = new Buffer(pdata.star.story).toString('hex');
+            console.log('PDATA: ' + pdata.star.story)
 
             //TODO: save block only if signature validated
+            console.log*('Before addBlock()')
             let newBlockHeight = await chain.addBlock(new cBlock(pdata));
 
-            //TODO: after saving block, delete junk data w/ wallet address as key
+            console.log('The newly added block got height ' + newBlockHeight)
+
+            //after saving block, delete junk data w/ wallet address as key
+            // try {
+            //     await l_DB.invalidateRequest(address);
+            // } catch (e) {
+            //     console.log(e)
+            // }
 
             return h.response(await chain.getBlock(newBlockHeight)).code(201)
         } catch (e) {
@@ -215,6 +244,93 @@ server.route({
     }
 });
 
+//Get Block by hash
+/*
+Block hash for testing
+dff19581634c1e0db70144554d81acc3f3f071acd0b008449476c846a358d9bd
+ */
+server.route({
+    method:'GET',
+    path:'/stars/hash:{hash}',
+    handler:async function(request,h) {
+        const hash = request.params.hash ?
+            encodeURIComponent(request.params.hash) :
+            '0';
+        console.log(hash);
+        try{
+            const response = await chain.getBlockByHash(hash);
+            return h.response(response).code(200)
+        } catch (e) {
+            console.log('Block not found')
+            return h.response(e).code(404)
+        }
+
+    }
+});
+
+
+/*
+Get Block by address
+142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ
+
+ */
+server.route({
+    method:'GET',
+    path:'/stars/address:{address}',
+    handler:async function(request,h) {
+        const address = request.params.address ?
+            encodeURIComponent(request.params.address) :
+            '0';
+
+        try{
+            const response = await chain.getBlockByAddress(address);
+            return h.response(response).code(200)
+        } catch (e) {
+            console.log('Block not found')
+            return h.response(e).code(404)
+        }
+
+    }
+});
+
+/*
+Get all data (for testing)
+ */
+// server.route({
+//     method:'GET',
+//     path:'/all',
+//     handler:async function(request,h) {
+//         //
+//         // try{
+//         //     const response = await chain.getBlockByAddress(address);
+//         //     return h.response(response).code(200)
+//         // } catch (e) {
+//         //     console.log('Block not found')
+//         //     return h.response(e).code(404)
+//         // }
+//
+//         const level = require('level');
+//         const chainDB = '../chaindata';
+//         const db = level(chainDB);
+//
+//         db.createReadStream()
+//             .on('data', function (data) {
+//                 console.log(data.key, '=', data.value)
+//             })
+//             .on('error', function (err) {
+//                 console.log('Oh my!', err)
+//             })
+//             .on('close', function () {
+//                 console.log('Stream closed')
+//             })
+//             .on('end', function () {
+//                 console.log('Stream ended')
+//             })
+//
+//         return 'Finished all data';
+//
+//     }
+// });
 
 // Start the server
 async function start() {
