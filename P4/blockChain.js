@@ -35,11 +35,9 @@ class Blockchain {
 
     // Add new block
     async addBlock(newBlock) {
-        console.log('In blockChain.js - addBlock')
-
         //get max height
         let chainLength = await l_DB.getMaxHeight();
-        console.log(chainLength)
+        // console.log(chainLength)
 
         // Block height
         newBlock.height = chainLength;
@@ -50,22 +48,18 @@ class Blockchain {
 
         // previous block hash (Do not look for hash if Genesis block
         if (chainLength > 0) {
-            console.log('Chainlength is > 0')
-            console.log('Chainlength is ' + chainLength)
+            // console.log('Chainlength is > 0')
+            // console.log('Chainlength is ' + chainLength)
             let previousBlockHeight = parseInt(chainLength, 10) - parseInt(1, 10);
-            console.log('Prev block height is ' + previousBlockHeight)
             // const previousBlock = JSON.parse(await l_DB.getBlock(previousBlockHeight));
             const previousBlock = await l_DB.getBlock(previousBlockHeight);
-            console.log('Previous block is ' + previousBlock)
             newBlock.previousBlockHash = previousBlock.hash;
         }
 
         // Block hash with SHA256 using newBlock and converting to a string
         newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
         // Adding block object to chain
-        console.log('Before l_DB AddBlock')
         await l_DB.addBlock(newBlock.height, JSON.stringify(newBlock));
-        console.log('After l_DB AddBlock')
 
         console.log("Added Block #" + newBlock.height + " w/ hash " + newBlock.hash + " (previous hash: " + newBlock.previousBlockHash + ")");
 
