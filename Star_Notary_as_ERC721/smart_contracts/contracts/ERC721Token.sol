@@ -116,6 +116,15 @@ Functions in ERC721
     /// @param _to The new owner
     /// @param _tokenId The NFT to transfer
     function transferFrom(address _from, address _to, uint256 _tokenId) external payable hasPermission(msg.sender, _tokenId){
+//        tokenToOwner[_tokenId] = _to;
+//        ownerToBalance[_from] -= 1;
+//
+//        emit Transfer(_from, _to, _tokenId);
+        transferFromHelper(_from, _to, _tokenId);
+    }
+
+    //An internal helper usable only by the contract, thus no need to checj for permissions
+    function transferFromHelper(address _from, address _to, uint256 _tokenId) internal{
         tokenToOwner[_tokenId] = _to;
         ownerToBalance[_from] -= 1;
 
