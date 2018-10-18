@@ -21,7 +21,7 @@ contract('StarNotary', accounts => {
     describe('can create a star ', () => {
         it('can create a star and get its meta-data', async function () {
 
-            await this.contract.createStar(name, story, ra, dec, mag, tokenId, {from: user1})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: user1})
             assert.deepEqual(await this.contract.tokenIdToStarInfo(tokenId), [name, story, ra, dec, mag]);
 
         })
@@ -37,7 +37,7 @@ contract('StarNotary', accounts => {
         let starPrice = web3.toWei(.01, "ether")
 
         beforeEach(async function () {
-            await this.contract.createStar(name, story, ra, dec, mag, starId, {from: user1})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: user1})
         })
 
         it('user1 can put up their star for sale', async function () {
@@ -70,7 +70,7 @@ contract('StarNotary', accounts => {
     //Check if added star exists, and another star does not.
     describe('check if star exist', () => {
         it('star already exist', async function () {
-            await this.contract.createStar(name, story, ra, dec, mag, tokenId, {from: defaultAccount})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: defaultAccount})
             assert.equal(await this.contract.checkIfStarExist(ra, dec, mag), true);
         })
         it('verified star does not exist', async function () {
@@ -81,7 +81,7 @@ contract('StarNotary', accounts => {
     //test ownerOf
     describe('star has correct owner', () => {
         it('ownerOf: verified star has correct owner', async function () {
-            await this.contract.createStar(name, story, ra, dec, mag, tokenId, {from: defaultAccount})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: defaultAccount})
             assert.equal(await this.contract.ownerOf(tokenId, {from: defaultAccount}), defaultAccount)
         })
     })
@@ -101,13 +101,13 @@ contract('StarNotary', accounts => {
         //verify we can set another user as approved to handle a token
 
         it('a user is approved to handle another user\'s token', async function () {
-            await this.contract.createStar(name, story, ra, dec, mag, tokenId, {from: defaultAccount})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: defaultAccount})
             await this.contract.approve(user1, tokenId, {from: defaultAccount});
             assert.equal(await this.contract.getApproved(tokenId), user1)
         })
 
         it('setApprovalForAll is validated', async function () {
-            await this.contract.createStar(name, story, ra, dec, mag, tokenId, {from: defaultAccount})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: defaultAccount})
             await this.contract.setApprovalForAll(user1, true)
             assert.equal(await this.contract.isApprovedForAll(defaultAccount, user1), true);
         })
@@ -115,7 +115,7 @@ contract('StarNotary', accounts => {
 
     describe('test safeTransferFrom', () => {
         beforeEach(async function () {
-            await this.contract.createStar(name, story, ra, dec, mag, tokenId, {from: defaultAccount})
+            await this.contract.createStar(name, story, ra, dec, mag, {from: defaultAccount})
             await this.contract.safeTransferFrom(defaultAccount, user1, tokenId)
         })
 

@@ -18,8 +18,12 @@ contract StarNotary is ERC721 {
     //A register star is linked to an address
     mapping(bytes32 => address) public hashToAddress;
 
-    function createStar(string _name, string _story, string _ra, string _dec, string _mag, uint256 _tokenId) public {
+    uint256 public tokenHeight;
 
+    function createStar(string _name, string _story, string _ra, string _dec, string _mag) public {
+
+        tokenHeight++;
+        uint256 _tokenId = tokenHeight;
         //Require star with this specific coordinates not already registered
         //If not, the default value returned is zero.
         require(hashToAddress[keccak256(abi.encodePacked(_ra, _dec, _mag))] == address(0));
