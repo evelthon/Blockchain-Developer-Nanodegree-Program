@@ -1,6 +1,6 @@
 var HDWalletProvider = require('truffle-hdwallet-provider');
 
-var mnemonic = 'HIDDEN';
+var mnemonic = 'repeat bomb body law sand square pupil leave silent owner garment urban';
 
 module.exports = {
     networks: {
@@ -11,7 +11,7 @@ module.exports = {
         },
         rinkeby: {
             provider: function() {
-                return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/HIDDEN')
+                return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/92248c392535476b9186759d8b1ffb10')
             },
             network_id: 4,
             gas: 6700000,
