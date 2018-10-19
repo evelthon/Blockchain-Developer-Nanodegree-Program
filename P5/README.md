@@ -25,6 +25,10 @@ node module to create a local server with
 npm install -g http-server 
 ```
 
+- Metascan must be connected to your wallet. Your need to add ether to your wallet from a faucet.
+- When your web app interacts with your wallet, a Metascan confirmation will pop-up for you to verify like below
+![p5_metamask_notif](https://user-images.githubusercontent.com/15610147/47234161-92dd2600-d3dd-11e8-84cb-5ba846c40260.png)
+
 ## Contract deployment
 ```
 $> truffle migrate --network rinkeby --reset --compile-all 
@@ -76,10 +80,3 @@ TxHash:0x24b77dc518b533f21f7a8fd4536d539812efd1209612de81893444783f03e24c
 TxReceipt Status:Success
 ```
  https://rinkeby.etherscan.io/tx/0x24b77dc518b533f21f7a8fd4536d539812efd1209612de81893444783f03e24c
-
-
-
-![screenshot_20180923_185116](https://user-images.githubusercontent.com/15610147/45930163-dcfcf400-bf64-11e8-912a-10c032b318e5.png)
-
-
- 
