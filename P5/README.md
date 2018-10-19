@@ -12,7 +12,7 @@ Installing Node and NPM is pretty straightforward using the installer package av
 ### Configuring your project
 
 
-- Install requirements
+- Install requirements (within smart_contracts folder)
 ```
 npm install 
 ```
@@ -26,7 +26,7 @@ npm install -g http-server
 ```
 
 - Metascan must be connected to your wallet. Your need to add ether to your wallet from a faucet.
-- When your web app interacts with your wallet, a Metascan confirmation will pop-up for you to verify like below
+- When your web app interacts with your wallet, a Metascan confirmation will pop-up for you to confirm like below
 ![p5_metamask_notif](https://user-images.githubusercontent.com/15610147/47234161-92dd2600-d3dd-11e8-84cb-5ba846c40260.png)
 
 ## Contract deployment
@@ -80,3 +80,7 @@ TxHash:0x24b77dc518b533f21f7a8fd4536d539812efd1209612de81893444783f03e24c
 TxReceipt Status:Success
 ```
  https://rinkeby.etherscan.io/tx/0x24b77dc518b533f21f7a8fd4536d539812efd1209612de81893444783f03e24c
+ 
+ #### Attributions
+ 1. Deploying a Smart Contract in Rinkeby using Infura 
+ https://walkingtree.tech/deploying-a-smart-contract-in-rinkeby-using-infura/
