@@ -174,14 +174,14 @@ contract SupplyChain {
         //      }
         // Add the new item as part of Harvest
         items[_upc] = Item({
-        originFarmerID: _originFarmerID,
-        originFarmName: _originFarmName,
-        originFarmInformation: _originFarmInformation,
-        originFarmLatitude: _originFarmLatitude,
-        originFarmLongitude: _originFarmLongitude,
+            originFarmerID: _originFarmerID,
+            originFarmName: _originFarmName,
+            originFarmInformation: _originFarmInformation,
+            originFarmLatitude: _originFarmLatitude,
+            originFarmLongitude: _originFarmLongitude,
 
-        productNotes: _productNotes
-        })
+            productNotes: _productNotes
+            })
 
         // Increment sku
         sku = sku + 1;
@@ -191,15 +191,17 @@ contract SupplyChain {
     }
 
     // Define a function 'extractItem' that allows a farmer to mark an item 'Extracted'
-    function extractItem(uint _upc) public
-        // Call modifier to check if upc has passed previous supply chain stage
+    function extractItem(uint _upc) harvested onlyFarmer public
+        // Call modifier to check if upc has passed previous supply chain stage (modifier harvested)
 
-        // Call modifier to verify caller of this function
+        // Call modifier to verify caller of this function (only the farmer can extract a harvested item)
 
     {
         // Update the appropriate fields
+        items[_upc].itemState = State.Extracted;
 
         // Emit the appropriate event
+        emit Extracted(_upc);
 
     }
 
