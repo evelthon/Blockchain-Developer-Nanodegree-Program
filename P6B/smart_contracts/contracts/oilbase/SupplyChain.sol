@@ -206,35 +206,39 @@ contract SupplyChain {
     }
 
     // Define a function 'packItem' that allows a farmer to mark an item 'Packed'
-    function packItem(uint _upc) public
-        // Call modifier to check if upc has passed previous supply chain stage
+    function packItem(uint _upc) extracted onlyFarmer public
+        // Call modifier to check if upc has passed previous supply chain stage (extracted)
 
-        // Call modifier to verify caller of this function
+        // Call modifier to verify caller of this function (only farmer)
 
     {
         // Update the appropriate fields
+        items[_upc].itemState = State.Packed;
 
         // Emit the appropriate event
+        emit Packed(_upc);
 
     }
 
     // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
-    function sellItem(uint _upc, uint _price) public
+    function sellItem(uint _upc, uint _price) packed onlyFarmer public
         // Call modifier to check if upc has passed previous supply chain stage
 
         // Call modifier to verify caller of this function
 
     {
         // Update the appropriate fields
+        items[_upc].itemState = State.ForSale;
 
         // Emit the appropriate event
+        emit ForSale(_upc);
 
     }
 
     // Define a function 'buyItem' that allows the disributor to mark an item 'Sold'
     // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough,
     // and any excess ether sent is refunded back to the buyer
-    function buyItem(uint _upc) public payable
+    function buyItem(uint _upc) forSale onlyFarmer public payable
         // Call modifier to check if upc has passed previous supply chain stage
 
         // Call modifer to check if buyer has paid enough
