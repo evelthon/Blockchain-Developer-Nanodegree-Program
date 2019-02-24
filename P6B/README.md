@@ -3,6 +3,11 @@ Architect a Blockchain Supply Chain Solution - Part B
 
 Project rubric https://review.udacity.com/#!/rubrics/1710/view
 
+Using:
+- Truffle v4.1.15
+- node v8.15.0
+
+
 ## Getting Started
 
 These instructions will install requirements and allow you to execute the code.
