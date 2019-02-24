@@ -173,6 +173,7 @@ https://rinkeby.etherscan.io/tx/0xa75b4f3754f8e7241be24c4d417e19ebbf2d1653d09901
 ## UML Diagrams
 
 ### Activity Diagram
+[image_activity]: ./images/p6b_activity.png "Activity Diagram"
 
 ### Sequence Diagram
 
