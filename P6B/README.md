@@ -19,7 +19,7 @@ npm install
 
 You also need ganache-cli and truffle (not v5).
 
-- To test the contract issue the command ```truffle test test/TestSupplychain.js```.
+- To test the contract start ```ganache-cli``` and issue the command ```truffle test test/TestSupplychain.js```.
 All tests should pass.
 ``` 
 $>truffle test test/TestSupplychain.js 
