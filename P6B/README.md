@@ -1,6 +1,8 @@
 # Project6B
 Architect a Blockchain Supply Chain Solution - Part B
 
+Project rubric https://review.udacity.com/#!/rubrics/1710/view
+
 ## Getting Started
 
 These instructions will install requirements and allow you to execute the code.
