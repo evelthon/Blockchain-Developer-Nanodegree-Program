@@ -54,8 +54,11 @@ Consumer: accounts[4]  0xd37b7b8c62be2fdde8daa9816483aebdbd356088
 - Metascan must be connected to your wallet. Your need to add ether to your wallet from a faucet.
 - When your web app interacts with your wallet, Metascan will ask for confirmation.
 
-- To start the application issue the command  ```npm run dev```
-
+- To start the application issue the command  ```npm run dev```. The UI will look like below:
+### Farm details
+![image1](./images/farm_details.png)
+### Product details
+![image1](./images/Product_details.png)
 
 ## Contract deployment
 ```
@@ -173,13 +176,16 @@ https://rinkeby.etherscan.io/tx/0xa75b4f3754f8e7241be24c4d417e19ebbf2d1653d09901
 ## UML Diagrams
 
 ### Activity Diagram
-[image_activity]: ./images/p6b_activity.png "Activity Diagram"
+![image1](./images/p6b_activity.png)
 
 ### Sequence Diagram
+![image1](./images/p6b_sequence.png)
 
 ### State Diagram
+![image1](./images/p6b_state.png)
 
 ### Class Diagram (Data model)
+![image1](./images/p6b_classes.png)
 
 
  #### Attributions
