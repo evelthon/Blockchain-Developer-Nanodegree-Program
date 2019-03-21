@@ -35,6 +35,15 @@ contract('Flight Surety Tests', async (accounts) => {
   /* Operations and Settings                                                              */
   /****************************************************************************************/
 
+  it(`(Initial creation) Airline registered on contract deployment`, async function () {
+
+    // Get operating status
+    let firstAirline = await config.flightSuretyData.isAirline.call(config.firstAirline);
+    assert.equal(firstAirline, true, "Airline not registered on contract deployment");
+
+  });
+
+
   it(`(multiparty) has correct initial isOperational() value`, async function () {
 
     // Get operating status

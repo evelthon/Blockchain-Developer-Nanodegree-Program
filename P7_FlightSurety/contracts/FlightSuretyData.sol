@@ -14,6 +14,12 @@ contract FlightSuretyData {
 
     mapping(address => uint256) private authorizedCaller; //Store list of authorized callers.
 
+    struct Airline {
+        bool isRegistered;
+        bool isFunded;
+    }
+    mapping(address => Airline) private airlines;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -22,13 +28,17 @@ contract FlightSuretyData {
     /**
     * @dev Constructor
     *      The deploying account becomes contractOwner
+    The first Airline gets registered on contract deployment
+
     */
-    constructor
-    (
+    constructor (
+        address firstAirline
     )
     public
     {
         contractOwner = msg.sender;
+        airlines[firstAirline].isRegistered = true;
+        airlines[firstAirline].isFunded = false;
     }
 
     /********************************************************************************************/
@@ -84,6 +94,8 @@ contract FlightSuretyData {
         return authorizedCaller[contractAddress] == 1;
     }
 
+
+
     /**
     * @dev Get operating status of contract
     *
@@ -116,6 +128,10 @@ contract FlightSuretyData {
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
+
+//    function isAirline(address airline) external view returns (bool) {
+//        return airlines[airline].isRegistered;
+//    }
 
     /**
      * @dev Add an airline to the registration queue
