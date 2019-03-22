@@ -26,6 +26,8 @@ contract FlightSuretyApp {
 
     address private contractOwner;          // Account used to deploy contract
 
+    FlightSuretyData flightSuretyData;
+
     struct Flight {
         bool isRegistered;
         uint8 statusCode;
@@ -79,8 +81,8 @@ contract FlightSuretyApp {
                                 public
     {
         contractOwner = msg.sender;
-
-        registeredAirlinesCount = 1;
+        flightSuretyData = FlightSuretyData(dataContract);
+//        registeredAirlinesCount = 1;
     }
 
     /********************************************************************************************/
@@ -337,5 +339,11 @@ contract FlightSuretyApp {
     }
 
 // endregion
+
+}
+
+
+//Add  function signatures  of the Data Contract
+contract FlightSuretyData {
 
 }

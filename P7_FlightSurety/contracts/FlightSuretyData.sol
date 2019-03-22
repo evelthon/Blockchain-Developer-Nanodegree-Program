@@ -14,11 +14,11 @@ contract FlightSuretyData {
 
     mapping(address => uint256) private authorizedCaller; //Store list of authorized callers.
 
-    struct Airline {
-        bool isRegistered;
-        bool isFunded;
-    }
-    mapping(address => Airline) private airlines;
+//    struct Airline {
+//        bool isRegistered;
+//        bool isFunded;
+//    }
+//    mapping(address => Airline) private airlines;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -32,13 +32,13 @@ contract FlightSuretyData {
 
     */
     constructor (
-        address firstAirline
+//        address firstAirline
     )
     public
     {
         contractOwner = msg.sender;
-        airlines[firstAirline].isRegistered = true;
-        airlines[firstAirline].isFunded = false;
+//        airlines[firstAirline].isRegistered = true;
+//        airlines[firstAirline].isFunded = false;
     }
 
     /********************************************************************************************/

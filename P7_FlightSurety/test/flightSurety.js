@@ -4,10 +4,6 @@ var BigNumber = require('bignumber.js');
 
 contract('Flight Surety Tests', async (accounts) => {
 
-  const ORACLES_COUNT = 10;
-  const STATUS_CODE_LATE_AIRLINE = 20;
-
-
   var config;
   before('setup contract', async () => {
     config = await Test.Config(accounts);
@@ -18,13 +14,13 @@ contract('Flight Surety Tests', async (accounts) => {
    Security checks
    ****************************************************************************************/
   //Check caller is not authorized
-  it('(security) Caller is (correctly) not authorized', async function () {
+  it('(authorization) Caller is (correctly) not authorized', async function () {
     let isAuthCaller = await config.flightSuretyData.isAuthorizedCaller(config.flightSuretyApp.address);
     assert.equal(isAuthCaller, false, 'Called is authorized when he should not be.');
   });
 
   //add authorized caller
-  it('(security) Caller can be authorized', async function () {
+  it('(authorization) Caller can be authorized', async function () {
     await config.flightSuretyData.authorizeCaller(config.flightSuretyApp.address);
     let isAuthCaller = await config.flightSuretyData.isAuthorizedCaller(config.flightSuretyApp.address);
     assert.equal(isAuthCaller, true, 'Caller should be authorized.');
@@ -35,15 +31,15 @@ contract('Flight Surety Tests', async (accounts) => {
   /* Operations and Settings                                                              */
   /****************************************************************************************/
 
-  it(`(Initial creation) Airline registered on contract deployment`, async function () {
-
-    // Get operating status
-    let firstAirline = await config.flightSuretyData.isAirline.call(config.firstAirline);
-    assert.equal(firstAirline, true, "Airline not registered on contract deployment");
-
-  });
-
-
+  // it(`(Initial creation) Airline registered on contract deployment`, async function () {
+  //
+  //   // Get operating status
+  //   let firstAirline = await config.flightSuretyData.isAirline.call(config.firstAirline);
+  //   assert.equal(firstAirline, true, "Airline not registered on contract deployment");
+  //
+  // });
+  //
+  //
   it(`(multiparty) has correct initial isOperational() value`, async function () {
 
     // Get operating status
@@ -52,7 +48,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  /*
+
 
   it(`(multiparty) can block access to setOperatingStatus() for non-Contract Owner account`, async function () {
 
@@ -122,5 +118,5 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-*/
+
 });
