@@ -14,11 +14,11 @@ contract FlightSuretyData {
 
     mapping(address => uint256) private authorizedCaller; //Store list of authorized callers.
 
-//    struct Airline {
-//        bool isRegistered;
-//        bool isFunded;
-//    }
-//    mapping(address => Airline) private airlines;
+    struct Airline {
+        bool isRegistered;
+        bool isFunded;
+    }
+    mapping(address => Airline) private airlines;
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -32,13 +32,15 @@ contract FlightSuretyData {
 
     */
     constructor (
-//        address firstAirline
+        address firstAirline
     )
     public
     {
         contractOwner = msg.sender;
-//        airlines[firstAirline].isRegistered = true;
-//        airlines[firstAirline].isFunded = false;
+
+        //Register first Airline w/o funding
+        airlines[firstAirline].isRegistered = true;
+        airlines[firstAirline].isFunded = false;
     }
 
     /********************************************************************************************/
@@ -47,6 +49,11 @@ contract FlightSuretyData {
 
     // Modifiers help avoid duplication of code. They are typically used to validate something
     // before a function is allowed to be executed.
+
+    modifier requireIsCallerAuthorized(){
+        require(msg.sender == contractOwner || authorizedCaller[msg.sender] == 1, "Caller not authorized!");
+        _;
+    }
 
     /**
     * @dev Modifier that requires the "operational" boolean variable to be "true"
@@ -60,12 +67,18 @@ contract FlightSuretyData {
         // All modifiers require an "_" which indicates where the function body will be added
     }
 
+
     /**
     * @dev Modifier that requires the "ContractOwner" account to be the function caller
     */
     modifier requireContractOwner()
     {
         require(msg.sender == contractOwner, "Caller is not contract owner");
+        _;
+    }
+
+    modifier requireIsCallerAirlineFunded(){
+        require(airlines[msg.sender].isFunded, "Airline not funded.");
         _;
     }
 
@@ -129,9 +142,9 @@ contract FlightSuretyData {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
-//    function isAirline(address airline) external view returns (bool) {
-//        return airlines[airline].isRegistered;
-//    }
+    function isAirline(address airline) external view returns (bool) {
+        return airlines[airline].isRegistered;
+    }
 
     /**
      * @dev Add an airline to the registration queue
@@ -140,10 +153,18 @@ contract FlightSuretyData {
      */
     function registerAirline
     (
+    address airline
     )
     external
-    pure
+    //TODO: add modifiers
+    requireIsOperational
+    requireIsCallerAuthorized
+    returns (bool status)
     {
+        airlines[airline].isRegistered = true;
+        airlines[airline].isFunded = false;
+
+        return airlines[airline].isRegistered;
     }
 
 

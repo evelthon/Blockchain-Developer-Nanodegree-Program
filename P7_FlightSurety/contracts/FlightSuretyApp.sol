@@ -24,6 +24,8 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
+    uint256 private constant AIRLINE_FEE = 10 ether;
+
     address private contractOwner;          // Account used to deploy contract
 
     FlightSuretyData flightSuretyData;
@@ -108,12 +110,12 @@ contract FlightSuretyApp {
     */
     function registerAirline
                             (
+                            address airline
                             )
                             external
-                            pure
                             returns(bool success, uint256 votes)
     {
-        return (success, 0);
+        return (flightSuretyData.registerAirline(airline), 0);
     }
 
 
@@ -345,5 +347,5 @@ contract FlightSuretyApp {
 
 //Add  function signatures  of the Data Contract
 contract FlightSuretyData {
-
+    function registerAirline(address airline) external returns(bool status);
 }
