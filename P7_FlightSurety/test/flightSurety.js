@@ -1,4 +1,4 @@
-
+var Web3Utils = require('web3-utils'); //https://web3js.readthedocs.io/en/1.0/getting-started.html
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
 
@@ -7,7 +7,7 @@ contract('Flight Surety Tests', async (accounts) => {
   var config;
   before('setup contract', async () => {
     config = await Test.Config(accounts);
-    // await config.flightSuretyData.authorizeCaller(config.flightSuretyApp.address);
+    let fundAmount = await config.flightSuretyApp.AIRLINE_REGISTRATION_FEE.call();
   });
 
   /****************************************************************************************
@@ -99,14 +99,14 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  it('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
+  it('(airline) cannot register an Airline using registerAirline() if it is not funded with at least 10 Ether', async () => {
 
     // ARRANGE
     let newAirline = accounts[2];
 
     // ACT
     try {
-      await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
+      await config.flightSuretyApp.registerAirline.call(newAirline, {from: config.firstAirline});
     }
     catch(e) {
 
@@ -115,6 +115,47 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ASSERT
     assert.equal(result, false, "Airline should not be able to register another airline if it hasn't provided funding");
+
+  });
+
+  //R
+//https://web3js.readthedocs.io/en/1.0/web3-utils.html
+  it('(airline) Airline cannot be funded with less than 10 Ether', async () => {
+
+    // ARRANGE
+    let reverted = false;
+
+    // ACT
+    try {
+      await config.flightSuretyApp.fund.call({from: config.firstAirline, value: Web3Utils.toWei("9.9", "ether")});
+    }
+    catch(e) {
+      reverted = true;
+    }
+
+    // ASSERT
+    assert.equal(reverted, true, "Airline initial funding was less than 10 Ether.");
+
+  });
+
+  it('(airline) Airline is funded with at least 10 Ether', async () => {
+//https://ethereum.stackexchange.com/questions/33154/function-call-behaves-differently-to-function-in-truffle-test
+    let fundAmount = await config.flightSuretyApp.AIRLINE_REGISTRATION_FEE.call();
+    // console.log(fundAmount);
+
+    // ARRANGE
+    let reverted = false;
+
+    // ACT
+    try {
+      await config.flightSuretyApp.fund.call({from: config.firstAirline, value: fundAmount.toString()});
+    }
+    catch(e) {
+      reverted = true;
+    }
+
+    // ASSERT
+    assert.equal(reverted, false, "Airline was not funded.");
 
   });
 
