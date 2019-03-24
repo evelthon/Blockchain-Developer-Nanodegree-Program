@@ -99,7 +99,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  it('(airline) cannot register an Airline using registerAirline() if it is not funded with at least 10 Ether', async () => {
+  it('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
 
     // ARRANGE
     let newAirline = accounts[2];
@@ -120,7 +120,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   //R
 //https://web3js.readthedocs.io/en/1.0/web3-utils.html
-  it('(airline) Airline cannot be funded with less than 10 Ether', async () => {
+  it('(airline) Airline cannot be funded (insufficient funds)', async () => {
 
     // ARRANGE
     let reverted = false;
@@ -138,7 +138,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  it('(airline) Airline is funded with at least 10 Ether', async () => {
+  it('(airline) Airline is funded with 10 Ether', async () => {
 //https://ethereum.stackexchange.com/questions/33154/function-call-behaves-differently-to-function-in-truffle-test
     let fundAmount = await config.flightSuretyApp.AIRLINE_REGISTRATION_FEE.call();
     // console.log(fundAmount);
@@ -148,7 +148,7 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ACT
     try {
-      await config.flightSuretyApp.fund.call({from: config.firstAirline, value: fundAmount.toString()});
+      await config.flightSuretyApp.fund({from: config.firstAirline, value: fundAmount.toString()});
     }
     catch(e) {
       reverted = true;
@@ -156,6 +156,136 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ASSERT
     assert.equal(reverted, false, "Airline was not funded.");
+
+  });
+
+  it('(airline) A funded Airline can register another airline using registerAirline()', async () => {
+
+    // ARRANGE
+    let airline2 = accounts[2];
+    let reverted = false;
+
+    // ACT
+    try {
+      console.log('xxx1');
+      await config.flightSuretyApp.registerAirline(airline2, {from: config.firstAirline});
+      console.log('xxx2');
+
+    }
+    catch(e) {
+      reverted = true;
+    }
+
+    let tmp = await config.flightSuretyApp.registeredAirlinesCount.call();
+    console.log(tmp.toString());
+
+    // ASSERT
+    assert.equal(reverted, false, "A funded airline should be able to be registered a new airline.");
+
+  });
+
+  it('(airline) A registered airline cannot be registered twice', async () => {
+
+    // ARRANGE
+    let airline2 = accounts[2];
+    let reverted = false;
+
+    // ACT
+    try {
+      await config.flightSuretyApp.registerAirline(airline2, {from: config.firstAirline});
+    }
+    catch(e) {
+      reverted = true;
+    }
+
+    // ASSERT
+    assert.equal(reverted, true, "An airline should not be registered twice.");
+
+  });
+
+  it('(airline) New airlines are registered until multi-party consensus threshold is reached', async () => {
+
+    // ARRANGE
+    let airline3 = accounts[3];
+    let airline4 = accounts[4];
+    let airline5 = accounts[5];
+    let reverted = false;
+
+    // ACT
+    try {
+      await config.flightSuretyApp.registerAirline(airline3, {from: config.firstAirline})
+      // let tmp = await config.flightSuretyApp.registeredAirlinesCount.call();
+      // console.log(tmp.toString());
+      await config.flightSuretyApp.registerAirline(airline4, {from: config.firstAirline});
+      await config.flightSuretyApp.registerAirline(airline5, {from: config.firstAirline});
+    }
+    catch(e) {
+      reverted = true
+      console.log(e);
+    }
+
+    // ASSERT
+    // assert.equal(reverted, true, "An airline should not be registered twice.");
+    let reggedAirlines = await config.flightSuretyApp.registeredAirlinesCount.call();
+    assert.equal(reggedAirlines.toString(), 4, "Threshold not honored");
+
+
+  });
+
+  it('(airline) Starting from first funded airline, fund the first 4 airlines', async () => {
+
+    // ARRANGE
+    let fundAmount = await config.flightSuretyApp.AIRLINE_REGISTRATION_FEE.call();
+    let airline2 = accounts[2];
+    let airline3 = accounts[3];
+    let airline4 = accounts[4];
+    let reverted = false;
+
+    // ACT
+    try {
+      await config.flightSuretyApp.fund({from: airline2, value: fundAmount.toString()});
+      await config.flightSuretyApp.fund({from: airline3, value: fundAmount.toString()});
+      await config.flightSuretyApp.fund({from: airline4, value: fundAmount.toString()});
+    }
+    catch(e) {
+      reverted = true;
+      console.log(e);
+    }
+
+    // ASSERT
+    assert.equal(reverted, false, "Airlines 2 - 4 not funded.");
+
+  });
+
+  it('(airline) Register a fifth Airline using multi-party consensus', async () => {
+
+    // ARRANGE
+    let fundAmount = await config.flightSuretyApp.AIRLINE_REGISTRATION_FEE.call();
+
+    let airline6 = accounts[6];//new airline
+    let airline2 = accounts[2];//registered
+    let airline3 = accounts[3];//registered
+
+
+    //Register new airline - Registered count should not change.
+    await config.flightSuretyApp.registerAirline(airline6, {from: airline2});
+    let registeredAirlines = await config.flightSuretyApp.registeredAirlinesCount.call();
+    assert.equal(registeredAirlines.toString(), 4, "Threshold not honored");
+
+    //Attempt multiple voting from airline2 - should be ignored
+    let isMultipleVotingAllowed = true;
+    try {
+      await config.flightSuretyApp.registerAirline(airline6, {from: airline2});
+    }
+    catch (e) {
+      isMultipleVotingAllowed = false;
+    }
+    assert.equal(isMultipleVotingAllowed, false, "ERROR: Multiple voting occured");
+
+    //Airline3 votes to register airline6 (new vote)
+    await config.flightSuretyApp.registerAirline(airline6, {from: airline3});
+    registeredAirlines = await config.flightSuretyApp.registeredAirlinesCount.call();
+    assert.equal(registeredAirlines.toString(), 5, "ERROR: Airline consensus not honored");
 
   });
 
