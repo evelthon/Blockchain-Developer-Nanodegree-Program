@@ -10,7 +10,8 @@ import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 /* FlightSurety Smart Contract                      */
 /************************************************** */
 contract FlightSuretyApp {
-    using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
+    using SafeMath for uint256;
+    using SafeMath for uint8; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
@@ -25,7 +26,7 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
     uint256 public constant AIRLINE_REGISTRATION_FEE = 10 ether;
-    uint256 private constant MULTIPARTY_CONSENSUS_THRESHOLD = 4;
+    uint8 private constant MULTIPARTY_CONSENSUS_THRESHOLD = 4;
 
     address private contractOwner;          // Account used to deploy contract
 
@@ -40,7 +41,8 @@ contract FlightSuretyApp {
     mapping(bytes32 => Flight) private flights;
 
 
-    uint256 public registeredAirlinesCount;
+    uint8 public registeredAirlinesCount;
+    mapping(address => address[]) private newAirlineVotes;
 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -126,17 +128,51 @@ contract FlightSuretyApp {
                             address airline
                             )
                             external
-                            returns(bool response, uint256 votes)
+                requireIsOperational
+//                            returns(bool response, uint256 votes)
     {
-        response = false;
+        bool newAirlineAdded = false;
         if(registeredAirlinesCount < MULTIPARTY_CONSENSUS_THRESHOLD) {
-            response = flightSuretyData.registerAirline(msg.sender, airline);
-            if(response){
-                registeredAirlinesCount = registeredAirlinesCount.add(1);
+            newAirlineAdded = flightSuretyData.registerAirline(msg.sender, airline);
+//            if(newAirlineAdded){
+//                registeredAirlinesCount++;
+//            }
+
+        } else {
+            //Multi party consensus required
+
+            bool isMultipleVote = false;
+            for(uint i = 0; i < newAirlineVotes[airline].length; i++) {
+                if(newAirlineVotes[airline][i] == msg.sender) {
+                    isMultipleVote = true;
+                    break;
+                }
             }
+            require(!isMultipleVote, "An airline cannot vote multiple times.");
+
+            //add new vote to the list
+            newAirlineVotes[airline].push(msg.sender);
+
+            //Check if more than 50% voted for addition
+            if(newAirlineVotes[airline].length >= registeredAirlinesCount.div(2)){
+                //add new airline
+                newAirlineAdded = flightSuretyData.registerAirline(msg.sender, airline);
+//                if(newAirlineAdded){
+//                    registeredAirlinesCount++;
+//                }
+                //clear old votes
+//                newAirlineVotes[airline] = new address[](0);
+                //Note: delete leaves a gap, but since we use addresses we should be ok
+                delete newAirlineVotes[airline];
+            }
+
         }
-        votes = 0;
-        return (response, votes);
+
+        if(newAirlineAdded){
+            registeredAirlinesCount = registeredAirlinesCount + 1;
+        }
+//        votes = 0;
+//        return (response, votes);
 
 //        return (flightSuretyData.registerAirline(airline), 0);
     }
