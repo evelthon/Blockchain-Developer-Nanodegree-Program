@@ -24,7 +24,8 @@ contract FlightSuretyApp {
     uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
-    uint256 private constant AIRLINE_FEE = 10 ether;
+    uint256 public constant AIRLINE_REGISTRATION_FEE = 10 ether;
+    uint256 private constant MULTIPARTY_CONSENSUS_THRESHOLD = 4;
 
     address private contractOwner;          // Account used to deploy contract
 
@@ -39,7 +40,7 @@ contract FlightSuretyApp {
     mapping(bytes32 => Flight) private flights;
 
 
-    uint8 public registeredAirlinesCount;
+    uint256 public registeredAirlinesCount;
 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -84,7 +85,7 @@ contract FlightSuretyApp {
     {
         contractOwner = msg.sender;
         flightSuretyData = FlightSuretyData(dataContract);
-//        registeredAirlinesCount = 1;
+        registeredAirlinesCount = 1;
     }
 
     /********************************************************************************************/
@@ -103,19 +104,41 @@ contract FlightSuretyApp {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
+    //Helper function to test that only the contract owner can fund the first airline
 
-   /**
-    * @dev Add an airline to the registration queue
-    *
-    */
+    function fund () public payable
+    requireIsOperational
+    {
+        //fail fast
+        require(msg.value >= AIRLINE_REGISTRATION_FEE, "Airline must be funded with least 10 Ether.");
+        //if all goes well, transfer amount to Data Contract address.
+        address(flightSuretyData).transfer(msg.value);
+        flightSuretyData.fundAirline(msg.sender);
+    }
+
+
+    /**
+     * @dev Add an airline to the registration queue
+     *
+     */
     function registerAirline
                             (
                             address airline
                             )
                             external
-                            returns(bool success, uint256 votes)
+                            returns(bool response, uint256 votes)
     {
-        return (flightSuretyData.registerAirline(airline), 0);
+        response = false;
+        if(registeredAirlinesCount < MULTIPARTY_CONSENSUS_THRESHOLD) {
+            response = flightSuretyData.registerAirline(msg.sender, airline);
+            if(response){
+                registeredAirlinesCount = registeredAirlinesCount.add(1);
+            }
+        }
+        votes = 0;
+        return (response, votes);
+
+//        return (flightSuretyData.registerAirline(airline), 0);
     }
 
 
@@ -347,5 +370,6 @@ contract FlightSuretyApp {
 
 //Add  function signatures  of the Data Contract
 contract FlightSuretyData {
-    function registerAirline(address airline) external returns(bool status);
+    function registerAirline(address callingAirline, address airline) external returns(bool status);
+    function fundAirline (address airline) external;
 }
