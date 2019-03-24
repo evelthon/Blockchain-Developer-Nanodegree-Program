@@ -77,8 +77,8 @@ contract FlightSuretyData {
         _;
     }
 
-    modifier requireIsCallerAirlineFunded(){
-        require(airlines[msg.sender].isFunded, "Airline not funded.");
+    modifier requireIsCallerAirlineFunded(address callingAirline){
+        require(airlines[callingAirline].isFunded, "Airline cannot participate in contract if not funded.");
         _;
     }
 
@@ -99,8 +99,7 @@ contract FlightSuretyData {
         delete authorizedCaller[contractAddress];
     }
 
-    function isAuthorizedCaller(address contractAddress) public
-    view
+    function isAuthorizedCaller(address contractAddress) public view
     requireContractOwner
     returns (bool)
     {
@@ -142,6 +141,16 @@ contract FlightSuretyData {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
+    //See https://ethereum.stackexchange.com/questions/29771/retrieve-token-balance-for-addresses?rq=1
+    function getBalance(address addr) public view
+    requireIsOperational
+    requireIsCallerAuthorized
+    returns (uint256){
+        return address(addr).balance;
+    }
+
+
+    //Verifies an Airline by the fact the airline is registered
     function isAirline(address airline) external view returns (bool) {
         return airlines[airline].isRegistered;
     }
@@ -151,20 +160,26 @@ contract FlightSuretyData {
      *      Can only be called from FlightSuretyApp contract
      *
      */
-    function registerAirline
-    (
-    address airline
-    )
-    external
-    //TODO: add modifiers
+    function registerAirline(address callingAirline, address airline) external
     requireIsOperational
     requireIsCallerAuthorized
+    requireIsCallerAirlineFunded(callingAirline)
     returns (bool status)
     {
+        //Fail fast if airline already registered
+        require(!airlines[airline].isRegistered, "Airline already registered.");
         airlines[airline].isRegistered = true;
         airlines[airline].isFunded = false;
 
         return airlines[airline].isRegistered;
+    }
+
+
+    function fundAirline (address airline) external
+    requireIsOperational
+    requireIsCallerAuthorized
+    {
+        airlines[airline].isFunded = true;
     }
 
 
