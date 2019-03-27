@@ -13,6 +13,7 @@ export default class DOM {
     static header = (...args) => DOM.makeElement(`header`, ...args);
     static section = (...args) => DOM.makeElement(`section`, ...args);
     static p = (...args) => DOM.makeElement(`p`, ...args);
+    static input = (...args) => DOM.makeElement(`input`, ...args);
     static span = (...args) => DOM.makeElement(`span`, ...args);
     static img = (...args) => DOM.makeElement(`img`, ...args);
     static td = (...args) => DOM.makeElement(`td`, ...args);
