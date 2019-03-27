@@ -20,6 +20,23 @@ contract FlightSuretyData {
     }
     mapping(address => Airline) private airlines;
 
+
+    //struct of data for each insured traveler
+    struct FlightInsurance {
+        bool isInsured;// is traveler insured
+        bool isCredited;//used to determine if the traveler was payed(avoid multiple payments)
+        uint256 amount;//amount traveler is insured
+    }
+
+    //What will be payble to each insured traveler (or what was payed?)
+    mapping(address => uint256) private insureeBalances;
+
+    //Insurance details of each traveler (all flights)
+    mapping(bytes32 => FlightInsurance) private flightInsurances;
+
+    //List of insured travelers per flight
+    mapping(bytes32 => address[]) private insureesMap;
+
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
     /********************************************************************************************/
@@ -82,6 +99,11 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier requireFlightNotInsured(address sender, address airline, string flightCode, uint256 timestamp){
+        require(!isFlightInsured(sender, airline, flightCode, timestamp), "Passenger is already insured");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -106,6 +128,12 @@ contract FlightSuretyData {
         return authorizedCaller[contractAddress] == 1;
     }
 
+    function isFlightInsured(address sender, address airline, string flightCode, uint256 timestamp) public view
+    returns (bool)
+    {
+        FlightInsurance storage insurance = flightInsurances[getKey(sender, airline, flightCode, timestamp)];
+        return insurance.isInsured;
+    }
 
 
     /**
@@ -182,18 +210,59 @@ contract FlightSuretyData {
         airlines[airline].isFunded = true;
     }
 
+    function insureeBalance (address sender) external
+    requireIsOperational
+    requireIsCallerAuthorized
+    view
+    returns (uint256)
+    {
+        return insureeBalances[sender];
+    }
 
     /**
      * @dev Buy insurance for a flight
      *
      */
+
+    //Reading on storage vs memory https://medium.com/coinmonks/what-the-hack-is-memory-and-storage-in-solidity-6b9e62577305
     function buy
     (
+        address sender,
+        address airline,
+        string flightCode,
+        uint256 timestamp,
+        uint256 insuranceAmount
     )
     external
-    payable
+    requireIsOperational
+    requireIsCallerAuthorized
+    requireFlightNotInsured(sender, airline, flightCode, timestamp)
     {
+        FlightInsurance storage flInsurance = flightInsurances[getKey(sender, airline, flightCode, timestamp)];
+        flInsurance.isInsured = true;
+        flInsurance.amount = insuranceAmount;
 
+        //add insuree to list of insurees
+        //TODO: see checkIfStarExist()
+
+        //Breaking the function helps avoid error: CompilerError: Stack too deep, try removing local variables.
+        //In other programming languages it would be ok to be one function
+        saveInsuree(sender, airline, flightCode, timestamp);
+    }
+
+    function saveInsuree(address sender, address airline, string flightCode, uint256 timestamp) internal requireIsOperational {
+        address [] storage insurees = insureesMap[getKey(address(0), airline, flightCode, timestamp)];
+        bool duplicate = false;
+        for(uint256 i = 0; i < insurees.length; i++) {
+            if(insurees[i] == sender) {
+                duplicate = true;
+                break;
+            }
+        }
+
+        if(!duplicate) {
+            insurees.push(sender);
+        }
     }
 
     /**
@@ -201,10 +270,26 @@ contract FlightSuretyData {
     */
     function creditInsurees
     (
+    address airline,
+    string flightCode,
+    uint256 timestamp
     )
     external
-    pure
+    requireIsOperational
+    requireIsCallerAuthorized
     {
+        address [] storage insurees = insureesMap[getKey(address(0), airline, flightCode, timestamp)];
+
+        for(uint i = 0; i < insurees.length; i++) {
+            FlightInsurance storage insurance = flightInsurances[getKey(insurees[i], airline, flightCode, timestamp)];
+
+            //Verify the passenger was not previously credited before
+            // his payment amount is increased by 1.5x
+            if(insurance.isInsured && !insurance.isCredited) {
+                insurance.isCredited = true;
+                insureeBalances[insurees[i]] = insureeBalances[insurees[i]].add(insurance.amount.div(10).mul(15));
+            }
+        }
     }
 
 
@@ -212,12 +297,15 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
-    function pay
-    (
-    )
-    external
-    pure
+    function pay (address sender) external requireIsOperational requireIsCallerAuthorized
     {
+        //Fail fast if contract has no funds
+        require(address(this).balance >= insureeBalances[sender], "Error: Not enought funds in contract");
+        //Continue with withdrawl
+        uint256 tmp = insureeBalances[sender];
+        insureeBalances[sender] = 0;
+        sender.transfer(tmp);
+
     }
 
     /**
@@ -225,12 +313,17 @@ contract FlightSuretyData {
      *      resulting in insurance payouts, the contract should be self-sustaining
      *
      */
-    function fund
-    (
-    )
-    public
-    payable
+    function fund() public payable
     {
+    }
+
+    function getKey(
+        address insuree,
+        address airline,
+        string memory flight,
+        uint256 timestamp
+    ) pure internal returns(bytes32){
+        return keccak256(abi.encodePacked(insuree, airline, flight, timestamp));
     }
 
     function getFlightKey
@@ -245,6 +338,7 @@ contract FlightSuretyData {
     {
         return keccak256(abi.encodePacked(airline, flight, timestamp));
     }
+
 
     /**
     * @dev Fallback function for funding smart contract.
