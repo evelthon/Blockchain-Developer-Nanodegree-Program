@@ -252,7 +252,7 @@ contract FlightSuretyData {
 
     function saveInsuree(address sender, address airline, string flightCode, uint256 timestamp) internal requireIsOperational {
         address [] storage insurees = insureesMap[getKey(address(0), airline, flightCode, timestamp)];
-        bool duplicate = false;
+        bool insureeExists = false;
         for(uint256 i = 0; i < insurees.length; i++) {
             if(insurees[i] == sender) {
                 duplicate = true;
@@ -260,7 +260,7 @@ contract FlightSuretyData {
             }
         }
 
-        if(!duplicate) {
+        if(!insureeExists) {
             insurees.push(sender);
         }
     }
