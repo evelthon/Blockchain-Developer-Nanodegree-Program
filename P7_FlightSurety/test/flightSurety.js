@@ -388,18 +388,18 @@ contract('Flight Surety Tests', async (accounts) => {
 
   it('(passenger       ) check passenger was credited 1.5x but do not withdraw amount', async () => {
     let insuree = accounts[7];
-    let rejected = false;
+    let reverted = false;
     let balance = 0;
 
     try {
       balance = await config.flightSuretyApp.insureeBalance({from: insuree});
     }
     catch(e) {
-      rejected = true;
+      reverted = true;
     }
 
     // ASSERT
-    assert.equal(rejected, false, "Error:Unable to check balance.");
+    assert.equal(reverted, false, "Error:Unable to check balance.");
     assert.equal(balance.toString(), new BigNumber("1500000000000000000").toString(), "Error: Balance not credited.");
   });
 
@@ -408,19 +408,18 @@ contract('Flight Surety Tests', async (accounts) => {
     let initialBalance = await web3.eth.getBalance(insuree);
     let balance = 1000;
 
-    let rejected = false;
+    let reverted = false;
     try {
       await config.flightSuretyApp.makeWithdrawal({from: insuree});
       balance = await config.flightSuretyApp.insureeBalance({from: insuree});
     }
     catch(e) {
-      rejected = true;
+      reverted = true;
       // console.log(e);
     }
 
     let currentBalance = await web3.eth.getBalance(insuree);
-
-    assert.equal(rejected, false, "Failure on withdraw to passanger account.");
+    assert.equal(reverted, false, "Failure on withdraw to passanger account.");
     assert.equal(balance.toString(), "0", "Balance should be 0");
     assert.equal(new BigNumber(currentBalance.toString()).isGreaterThan(new BigNumber(initialBalance.toString())), true, "Invalid balance on account");
   });
@@ -429,18 +428,17 @@ contract('Flight Surety Tests', async (accounts) => {
     let insuree = accounts[7];
     let initialBalance = await web3.eth.getBalance(insuree);
 
-    let rejected = false;
+    let reverted = false;
     try {
       await config.flightSuretyApp.makeWithdrawal({from: insuree});
     }
     catch(e) {
-      rejected = true;
+      reverted = true;
       console.log(e);
     }
 
     let currentBalance = await web3.eth.getBalance(insuree);
-
-    assert.equal(rejected, false, "Error. Contract should allow multiple withdrawals.");
+    assert.equal(reverted, false, "Error. Contract should not allow multiple withdrawals.");
     assert.equal(new BigNumber(currentBalance.toString()).isEqualTo(new BigNumber(initialBalance.toString())), false, "Error: Balance is in error");
   });
 
