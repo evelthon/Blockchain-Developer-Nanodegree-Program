@@ -20,7 +20,7 @@ Installing Node and NPM is pretty straightforward using the installer package av
 ### Configuring your project
 
 
-- Install requirements (within project6 folder)
+- Install requirements
 ```
 npm install 
 ```
