@@ -18,7 +18,7 @@ contract Ownable {
 
     event ownerShipTransferred(address newOwner);
 
-    modifier onlyOwner(_owner) {
+    modifier onlyOwner() {
         require(_owner == msg.sender, "Not the correct owner");
         _;
     }
@@ -54,7 +54,7 @@ contract Pausable is Ownable{
     }
 
     modifier paused(){
-        require(paused, "Contract is not paused");
+        require(_paused, "Contract is not paused");
         _;
     }
 
@@ -259,7 +259,7 @@ contract ERC721 is Pausable, ERC165 {
 
         // TODO mint tokenId to given address & increase token count of owner
         _tokenOwner[tokenId] = to;
-        _ownedTokensCount.[to].increment();
+        _ownedTokensCount[to].increment();
 
         // TODO emit Transfer event
         emit Transfer(address(0), to, tokenId);
@@ -539,11 +539,16 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
 
     // TODO: Create an internal function to set the tokenURI of a specified tokenId
-    // It should be the _baseTokenURI + the tokenId in string form
-    // TIP #1: use strConcat() from the imported oraclizeAPI lib to set the complete token URI
-    // TIP #2: you can also use uint2str() to convert a uint to a string
-    // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
-    // require the token exists before setting
+    function _setTokenURI(uint256 tokenId) internal {
+        // It should be the _baseTokenURI + the tokenId in string form
+        // TIP #1: use strConcat() from the imported oraclizeAPI lib to set the complete token URI
+        // TIP #2: you can also use uint2str() to convert a uint to a string
+        // see https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol for strConcat()
+        // require the token exists before setting
+        require(_exists(tokenId), "tokenId does not exist");
+        _tokenURIs[tokenId] = strConcat(_baseTokenURI, uint2str(tokenId));
+    }
+
 
 }
 
@@ -555,6 +560,16 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 //      -takes in a 'to' address, tokenId, and tokenURI as parameters
 //      -returns a true boolean upon completion of the function
 //      -calls the superclass mint and setTokenURI functions
+
+contract CustomERC721Token is ERC721Metadata("Decentralized Housing Product.", "REX", "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
+
+    function mint(address to, uint256 tokenId, string memory tokenURI) public onlyOwner returns(bool) {
+        super._mint(to, tokenId);
+        super._setTokenURI(tokenId);
+        return true;
+    }
+
+}
 
 
 
