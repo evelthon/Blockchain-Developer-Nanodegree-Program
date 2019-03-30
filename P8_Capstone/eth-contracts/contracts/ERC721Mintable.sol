@@ -50,10 +50,12 @@ contract Pausable is Ownable{
     //  4) create 'whenNotPaused' & 'paused' modifier that throws in the appropriate situation
     modifier whenNotPaused(){
         require(!_paused, "Contract is paused");
+        _;
     }
 
     modifier paused(){
         require(paused, "Contract is not paused");
+        _;
     }
 
     //  5) create a Paused & Unpaused event that emits the address that triggered the event
