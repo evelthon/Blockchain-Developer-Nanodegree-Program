@@ -4,6 +4,7 @@ contract('TestERC721Mintable', accounts => {
 
     const account_one = accounts[0];
     const account_two = accounts[1];
+    const account_three = accounts[3];
 
     describe('have ownership properties', function () {
         beforeEach(async function () {
@@ -59,6 +60,34 @@ contract('TestERC721Mintable', accounts => {
         });
 
     });
+
+    describe('check correct approval handling', function () {
+        beforeEach(async function () {
+            this.contract = await ERC721MintableComplete.new({from: account_one});
+            await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_one})
+        });
+
+        it('verify approval for 1 token', async function () {
+            const tokenId = 123;
+            let approvedAddress = await this.contract.getApproved.call(tokenId, {from:account_one});
+            assert.equal(parseInt(approvedAddress), 0, "Should not be able to retrieve an approved token");
+            // console.log(parseInt(apprAddress));
+
+            //Test that can approve another address to transfer the given token ID
+            //current approved address is address_two. Change it to address_three
+            await this.contract.approve(account_three, tokenId, {from:account_two});
+            approvedAddress = await this.contract.getApproved.call(tokenId, {from:account_one});
+            assert.equal(approvedAddress, account_three, "Approved address should be account_three");
+
+        });
+
+        it('XXX verify approval for all tokens', async function () {
+
+        });
+
+
+    });
+
 
     describe('match erc721 spec', function () {
         beforeEach(async function () {
