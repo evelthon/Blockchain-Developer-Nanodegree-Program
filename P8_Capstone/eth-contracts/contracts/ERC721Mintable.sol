@@ -33,7 +33,7 @@ contract Ownable {
         require(!Address.isContract(newOwner), "The new address belongs to a contract.");
         _owner = newOwner;
         //emit ownership event (new owner)
-        emit ownerShipTransferred(_owner);
+        emit ownerShipTransferred(newOwner);
 
     }
 }
@@ -270,7 +270,7 @@ contract ERC721 is Pausable, ERC165 {
     function _transferFrom(address from, address to, uint256 tokenId) internal {
 
         // TODO: require from address is the owner of the given token
-        require(ownerOf(tokenId) == from, "from address is not the owener of the given token");
+        require(ownerOf(tokenId) == from, "from address is not the owner of the given token");
 
         // TODO: require token is being transfered to valid address
         require(to != address(0), "Token not being transferred to valid address");
@@ -499,7 +499,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
     string private _baseTokenURI;
 
     // TODO: create private mapping of tokenId's to token uri's called '_tokenURIs'
-    mapping(uint256 => string) _tokenURIs;
+    mapping(uint256 => string) private _tokenURIs;
 
     bytes4 private constant _INTERFACE_ID_ERC721_METADATA = 0x5b5e139f;
     /*
@@ -563,7 +563,7 @@ contract ERC721Metadata is ERC721Enumerable, usingOraclize {
 
 contract CustomERC721Token is ERC721Metadata("Decentralized Housing Product.", "REX", "https://s3-us-west-2.amazonaws.com/udacity-blockchain/capstone/") {
 
-    function mint(address to, uint256 tokenId, string memory tokenURI) public onlyOwner returns(bool) {
+    function mint(address to, uint256 tokenId) public onlyOwner returns(bool) {
         super._mint(to, tokenId);
         super._setTokenURI(tokenId);
         return true;
