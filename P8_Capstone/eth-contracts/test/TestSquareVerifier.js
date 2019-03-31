@@ -50,10 +50,10 @@ contract('SquareVerifier', accounts => {
     });
 
     //alter a value to make the proofing data wrong
-    const wrong_A = ["0x2b87e1cbd2ee48394d90b659b779d612a4c515b98e277fab5db9d4f79231b224", "0x1c084306a472d225fc35f13aa4ef2688d25b218eaac067dee53eb561f4c504f2"];
+    let wrongA_p = ["0x163dc17303650f735e6ccbcef77192c536a70a1fd08d690343f4d6bc5c226728", "0xa55996fcad1f1149651709eeac5d52d04ad258b17da2f76cd5a1e94f083f34a"];
     it('test verify wrong proof', async function () {
-      let result = await this.contract.verifyTx.call(wrong_A,
-        zokrates_proof.proof.A_p,
+      let result = await this.contract.verifyTx.call(zokrates_proof.proof.A,
+        wrongA_p,
         zokrates_proof.proof.B,
         zokrates_proof.proof.B_p,
         zokrates_proof.proof.C,
