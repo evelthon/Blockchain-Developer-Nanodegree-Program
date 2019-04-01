@@ -23,6 +23,8 @@ contract Ownable {
     }
     constructor () internal {
         _owner = msg.sender;
+
+        emit ownerShipTransferred(msg.sender);
     }
 
 
@@ -173,7 +175,7 @@ contract ERC721 is Pausable, ERC165 {
         require(to != owner, "to is the owner of tokenId.");
 
         // TODO require the msg sender to be the owner of the contract or isApprovedForAll() to be true
-        require(msg.sender == owner || isApprovedForAll(owner, msg.sender));
+        require(msg.sender == owner || isApprovedForAll(owner, msg.sender), "Actions not allowed (no permissions)");
 
         // TODO add 'to' address to token approvals
         _tokenApprovals[tokenId] = to;
