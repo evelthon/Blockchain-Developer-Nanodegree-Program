@@ -1,3 +1,14 @@
+const proof = require('./proofs/proof')
+const proof2 = require('./proofs/proof2')
+const proof3 = require('./proofs/proof3')
+const proof4 = require('./proofs/proof4')
+const proof5 = require('./proofs/proof5')
+const proof6 = require('./proofs/proof6')
+const proof7 = require('./proofs/proof7')
+
+
+var SquareVerifier = artifacts.require('SquareVerifier');
+
 var ERC721MintableComplete = artifacts.require('SolnSquareVerifier');
 
 contract('TestERC721Mintable', accounts => {
@@ -11,14 +22,28 @@ contract('TestERC721Mintable', accounts => {
 
     describe('have ownership properties', function () {
         beforeEach(async function () {
-            this.contract = await ERC721MintableComplete.new({from: account_one});
+            let sqVerifier = await SquareVerifier.new({from: account_one});
+            this.contract = await ERC721MintableComplete.new(sqVerifier.address, {from: account_one});
         })
 
         it('should fail when minting when address is not contract owner', async function () {
             let reverted = false;
 
             try {
-                await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_two})
+                // await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_two})
+                await this.contract.mintVerifiedTokenTo(
+                    account_two,
+                    123,
+                    proof.proof.A,
+                    proof.proof.A_p,
+                    proof.proof.B,
+                    proof.proof.B_p,
+                    proof.proof.C,
+                    proof.proof.C_p,
+                    proof.proof.H,
+                    proof.proof.K,
+                    proof.input,
+                    {from: account_two});
             } catch (e) {
                 reverted = true;
             }
@@ -66,8 +91,23 @@ contract('TestERC721Mintable', accounts => {
 
     describe('check correct approval handling', function () {
         beforeEach(async function () {
-            this.contract = await ERC721MintableComplete.new({from: account_one});
-            await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_one})
+            let sqVerifier = await SquareVerifier.new({from: account_one});
+            this.contract = await ERC721MintableComplete.new(sqVerifier.address, {from: account_one});
+            // await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_one})
+            await this.contract.mintVerifiedTokenTo(
+                account_two,
+                123,
+                proof2.proof.A,
+                proof2.proof.A_p,
+                proof2.proof.B,
+                proof2.proof.B_p,
+                proof2.proof.C,
+                proof2.proof.C_p,
+                proof2.proof.H,
+                proof2.proof.K,
+                proof2.input,
+                {from: account_one});
+
         });
 
         it('verify approval for 1 token', async function () {
@@ -105,14 +145,80 @@ contract('TestERC721Mintable', accounts => {
 
     describe('match erc721 spec', function () {
         beforeEach(async function () {
-            this.contract = await ERC721MintableComplete.new({from: account_one});
+            let sqVerifier = await SquareVerifier.new({from: account_one});
+            this.contract = await ERC721MintableComplete.new(sqVerifier.address, {from: account_one});
 
             // TODO: mint multiple tokens
-            await this.contract.mintVerifiedTokenTo(account_two, 0, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(account_three, 1, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(account_four, 2, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(account_five, 3, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(account_six, 4, {from: account_one});
+            // await this.contract.mintVerifiedTokenTo(account_two, 0, {from: account_one});
+            await this.contract.mintVerifiedTokenTo(
+                account_two,
+                0,
+                proof3.proof.A,
+                proof3.proof.A_p,
+                proof3.proof.B,
+                proof3.proof.B_p,
+                proof3.proof.C,
+                proof3.proof.C_p,
+                proof3.proof.H,
+                proof3.proof.K,
+                proof3.input,
+                {from: account_one});
+            // await this.contract.mintVerifiedTokenTo(account_three, 1, {from: account_one});
+            await this.contract.mintVerifiedTokenTo(
+                account_three,
+                1,
+                proof4.proof.A,
+                proof4.proof.A_p,
+                proof4.proof.B,
+                proof4.proof.B_p,
+                proof4.proof.C,
+                proof4.proof.C_p,
+                proof4.proof.H,
+                proof4.proof.K,
+                proof4.input,
+                {from: account_one});
+            // await this.contract.mintVerifiedTokenTo(account_four, 2, {from: account_one});
+            await this.contract.mintVerifiedTokenTo(
+                account_four,
+                2,
+                proof5.proof.A,
+                proof5.proof.A_p,
+                proof5.proof.B,
+                proof5.proof.B_p,
+                proof5.proof.C,
+                proof5.proof.C_p,
+                proof5.proof.H,
+                proof5.proof.K,
+                proof5.input,
+                {from: account_one});
+            // await this.contract.mintVerifiedTokenTo(account_five, 3, {from: account_one});
+            await this.contract.mintVerifiedTokenTo(
+                account_five,
+                3,
+                proof6.proof.A,
+                proof6.proof.A_p,
+                proof6.proof.B,
+                proof6.proof.B_p,
+                proof6.proof.C,
+                proof6.proof.C_p,
+                proof6.proof.H,
+                proof6.proof.K,
+                proof6.input,
+                {from: account_one});
+            // await this.contract.mintVerifiedTokenTo(account_six, 4, {from: account_one});
+            await this.contract.mintVerifiedTokenTo(
+                account_six,
+                4,
+                proof7.proof.A,
+                proof7.proof.A_p,
+                proof7.proof.B,
+                proof7.proof.B_p,
+                proof7.proof.C,
+                proof7.proof.C_p,
+                proof7.proof.H,
+                proof7.proof.K,
+                proof7.input,
+                {from: account_one});
         })
 
         it('should return total supply', async function () {
@@ -141,7 +247,7 @@ contract('TestERC721Mintable', accounts => {
             //add approval for account_four
             await this.contract.approve(account_four, tokenId, {from: account_two});
             approvedAddress = await this.contract.getApproved.call(tokenId, {from: account_one});
-            assert.equal(approvedAddress, account_four, "This should be approved for account_four");
+            assert.equal(approvedAddress, account_four, "This should be app<roved for account_four");
 
             //verify current owner
             let owner = await this.contract.ownerOf.call(tokenId, {from: account_one});
