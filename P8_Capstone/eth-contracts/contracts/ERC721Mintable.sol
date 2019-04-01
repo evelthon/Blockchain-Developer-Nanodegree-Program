@@ -4,7 +4,6 @@ import 'openzeppelin-solidity/contracts/utils/Address.sol';
 import 'openzeppelin-solidity/contracts/drafts/Counters.sol';
 import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 import 'openzeppelin-solidity/contracts/token/ERC721/IERC721Receiver.sol';
-//import 'openzeppelin-solidity/contracts/lifecycle/Pausable.sol' //pausable implementation from open zeppelin
 import "./Oraclize.sol";
 
 contract Ownable {
@@ -14,7 +13,7 @@ contract Ownable {
     //  3) create an 'onlyOwner' modifier that throws if called by any account other than the owner.
     //  4) fill out the transferOwnership function
     //  5) create an event that emits anytime ownerShip is transfered (including in the constructor)
-    address private _owner;
+    address public _owner;
 
     event ownerShipTransferred(address newOwner);
 
