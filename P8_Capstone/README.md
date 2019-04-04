@@ -405,7 +405,7 @@ Finished exporting verifier.
 * [ZoKrates](https://github.com/Zokrates/ZoKrates)
 
 
-Attributions
+# Attributions
 
 - Deploying a Smart Contract in Rinkeby using Infura https://walkingtree.tech/deploying-a-smart-contract-in-rinkeby-using-infura/
 - ZoKrates tutorial with Truffle https://medium.com/extropy-io/zokrates-tutorial-with-truffle-41135a3fb754
