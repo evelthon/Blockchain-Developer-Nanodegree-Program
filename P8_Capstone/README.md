@@ -1,6 +1,8 @@
 # Project8 (Blockchain Capstone project)
-The capstone will build upon the knowledge you have gained in the course in order to build a decentralized housing product.
+
 ![image1](./images/capstone_storeFront2.png)
+
+The capstone will build upon the knowledge you have gained in the course in order to build a decentralized housing product.
 
 Project rubric https://review.udacity.com/#!/rubrics/1712/view
 
