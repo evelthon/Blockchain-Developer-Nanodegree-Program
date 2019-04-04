@@ -65,8 +65,7 @@ async function mintTokens() {
                 gas: 3900000
                 // gas: 4993538
             });
-            console.log("Minted . Transaction: " + result.transactionHash);
-            // console.log("Minted . Transaction: " + result);
+            console.log("Mint Transaction: " + result.transactionHash);
         } catch (e) {
             console.log(e);
         }
