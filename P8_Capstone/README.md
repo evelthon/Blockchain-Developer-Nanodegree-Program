@@ -246,9 +246,9 @@ TxReceipt Status:Success
 https://rinkeby.etherscan.io/tx/0xfd3baba02ebc2bf9be1cecc6a04695cc84b26a4a51b6d100408253b687c2e1a7
 
 ### OpenSea Marketplace Storefront
-``` 
+
 https://rinkeby.opensea.io/category/decentralizedhousingproduct.
-```
+
 
 
 ## ZoKrates proof generation (zk-SNARKs)
