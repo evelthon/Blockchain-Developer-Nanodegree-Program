@@ -75,8 +75,9 @@ truffle test test/TestSolnSquareVerifier.js
 ### Rinkeby deployment
 
 - To migrate to Rinkeby:
+
 ```
- truffle migrate --network rinkeby --reset --compile-all 
+s> truffle migrate --network rinkeby --reset --compile-all 
 
 Compiling your contracts...
 ===========================
@@ -98,16 +99,16 @@ Migrations dry-run (simulation)
 ===============================
 > Network name:    'rinkeby-fork'
 > Network id:      4
-> Block gas limit: 0x6e38b1
+> Block gas limit: 0x6addc7
 
 
 1_initial_migration.js
 ======================
 
-   Deploying 'Migrations'
+   Replacing 'Migrations'
    ----------------------
-   > account:             0x60CEf8b8EE80C5E5220e8E9A472EFF0ce86C81E2
-   > balance:             12.709378009000000002
+   > account:             0xc77f63F94B2ae6933FEf1dB6830bb5131b0a390D
+   > balance:             7.49741838
    > gas used:            258162
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -120,52 +121,52 @@ Migrations dry-run (simulation)
 2_deploy_contracts.js
 =====================
 
-   Deploying 'SquareVerifier'
+   Replacing 'SquareVerifier'
    --------------------------
-   > account:             0x60CEf8b8EE80C5E5220e8E9A472EFF0ce86C81E2
-   > balance:             12.691366309000000002
+   > account:             0xc77f63F94B2ae6933FEf1dB6830bb5131b0a390D
+   > balance:             7.47940668
    > gas used:            1774142
    > gas price:           10 gwei
    > value sent:          0 ETH
    > total cost:          0.01774142 ETH
 
 
-   Deploying 'SolnSquareVerifier'
+   Replacing 'SolnSquareVerifier'
    ------------------------------
-   > account:             0x60CEf8b8EE80C5E5220e8E9A472EFF0ce86C81E2
-   > balance:             12.649473779000000002
-   > gas used:            4189253
+   > account:             0xc77f63F94B2ae6933FEf1dB6830bb5131b0a390D
+   > balance:             7.43746184
+   > gas used:            4194484
    > gas price:           10 gwei
    > value sent:          0 ETH
-   > total cost:          0.04189253 ETH
+   > total cost:          0.04194484 ETH
 
    -------------------------------------
-   > Total cost:          0.05963395 ETH
+   > Total cost:          0.05968626 ETH
 
 
 Summary
 =======
 > Total deployments:   3
-> Final cost:          0.06221557 ETH
+> Final cost:          0.06226788 ETH
 
 
 Starting migrations...
 ======================
 > Network name:    'rinkeby'
 > Network id:      4
-> Block gas limit: 0x6e4027
+> Block gas limit: 0x6ac2f5
 
 
 1_initial_migration.js
 ======================
 
-   Deploying 'Migrations'
+   Replacing 'Migrations'
    ----------------------
-   > Blocks: 0            Seconds: 8   > transaction hash:    0x61f26b63aadf539d9242b2b3c89ecff38dea91b3713133daf5c01fc2dc341030
-
-   > contract address:    0xBfD410FA631A14593D5d92D4f11ce93b9714f2a4
-   > account:             0x60CEf8b8EE80C5E5220e8E9A472EFF0ce86C81E2
-   > balance:             12.709228009000000002
+   > transaction hash:    0xf1c68d618b5c9b8f0a012e79eb45469dc55c7fb8edfb6cf5d3f4be3380184bc4
+   > Blocks: 0            Seconds: 12
+   > contract address:    0x79B6e44b3D5362D132b00f8D4F1Cc0E72c979Bc6
+   > account:             0xc77f63F94B2ae6933FEf1dB6830bb5131b0a390D
+   > balance:             7.49726838
    > gas used:            273162
    > gas price:           10 gwei
    > value sent:          0 ETH
@@ -181,74 +182,89 @@ Starting migrations...
 2_deploy_contracts.js
 =====================
 
-   Deploying 'SquareVerifier'
+   Replacing 'SquareVerifier'
    --------------------------
-   > transaction hash:    0xf558e9bccd5dbe83b210e56e478868c79db63ab9a342f5d9bb955bfab157037d
-   > Blocks: 0            Seconds: 8
-   > contract address:    0x9Ff03C04912048cdaF473b93fD874bBCB51A35Ca
-   > account:             0x60CEf8b8EE80C5E5220e8E9A472EFF0ce86C81E2
-   > balance:             12.691066309000000002
+   > transaction hash:    0x8ad3e7903f194053ffacc440bf8475b84c51555e84464fb5d76f8244178e3c60
+   > Blocks: 1            Seconds: 12
+   > contract address:    0xe02eA63d5977601995F2C3ECb11916e4F4376a0a
+   > account:             0xc77f63F94B2ae6933FEf1dB6830bb5131b0a390D
+   > balance:             7.47910668
    > gas used:            1774142
    > gas price:           10 gwei
    > value sent:          0 ETH
    > total cost:          0.01774142 ETH
 
 
-   Deploying 'SolnSquareVerifier'
+   Replacing 'SolnSquareVerifier'
    ------------------------------
-   > transaction hash:    0xfd3baba02ebc2bf9be1cecc6a04695cc84b26a4a51b6d100408253b687c2e1a7
-   > Blocks: 0            Seconds: 8
-   > contract address:    0x3D3013274C6E0f365675E79FfBa245d7D8Bd039C
-   > account:             0x60CEf8b8EE80C5E5220e8E9A472EFF0ce86C81E2
-   > balance:             12.647571779000000002
-   > gas used:            4349453
+   > transaction hash:    0x21438386b5aa33655a093439752b411ceb7fe9e46c327e74c22b029344629776
+   > Blocks: 0            Seconds: 9
+   > contract address:    0xd95E7d821eDB875e193a3a553879ffFCA09e10BD
+   > account:             0xc77f63F94B2ae6933FEf1dB6830bb5131b0a390D
+   > balance:             7.43540984
+   > gas used:            4369684
    > gas price:           10 gwei
    > value sent:          0 ETH
-   > total cost:          0.04349453 ETH
+   > total cost:          0.04369684 ETH
 
 
    > Saving migration to chain.
    > Saving artifacts
    -------------------------------------
-   > Total cost:          0.06123595 ETH
+   > Total cost:          0.06143826 ETH
 
 
 Summary
 =======
 > Total deployments:   3
-> Final cost:          0.06396757 ETH
+> Final cost:          0.06416988 ETH
+
+
 
 ```
-
 - To mint 10 tokens, issue the command ```node mint/mint.js``` within the project's root folder.
 
 ## View details on Etherscan
 ### SquareVerifier Contract address 
-- https://rinkeby.etherscan.io/address/0x9Ff03C04912048cdaF473b93fD874bBCB51A35Ca
+- https://rinkeby.etherscan.io/address/0xe02eA63d5977601995F2C3ECb11916e4F4376a0a
 ### Transaction information
 ```
-TxHash:0xf558e9bccd5dbe83b210e56e478868c79db63ab9a342f5d9bb955bfab157037d 
+TxHash:0x8ad3e7903f194053ffacc440bf8475b84c51555e84464fb5d76f8244178e3c60 
 TxReceipt Status:Success
 ```
-https://rinkeby.etherscan.io/tx/0xf558e9bccd5dbe83b210e56e478868c79db63ab9a342f5d9bb955bfab157037d
+https://rinkeby.etherscan.io/tx/0x8ad3e7903f194053ffacc440bf8475b84c51555e84464fb5d76f8244178e3c60
 
 
 
 
 ### SolnSquareVerifier Contract Address
-- https://rinkeby.etherscan.io/address/0x3D3013274C6E0f365675E79FfBa245d7D8Bd039C
+- https://rinkeby.etherscan.io/address/0xd95E7d821eDB875e193a3a553879ffFCA09e10BD
 
 ### Transaction information
 ```
-TxHash:0xfd3baba02ebc2bf9be1cecc6a04695cc84b26a4a51b6d100408253b687c2e1a7 
+TxHash:0x21438386b5aa33655a093439752b411ceb7fe9e46c327e74c22b029344629776 
 TxReceipt Status:Success
 ```
-https://rinkeby.etherscan.io/tx/0xfd3baba02ebc2bf9be1cecc6a04695cc84b26a4a51b6d100408253b687c2e1a7
+https://rinkeby.etherscan.io/tx/0x21438386b5aa33655a093439752b411ceb7fe9e46c327e74c22b029344629776
 
 ### OpenSea Marketplace Storefront
 ``` 
-https://rinkeby.opensea.io/category/decentralizedhousingproduct.
+https://rinkeby.opensea.io/category/decentralizedhousingproductp8
 ```
+
+When you add token to OpenSea you will need to confirm interaction through Metamask:
+![image1](./images/adding_token_to_opensea.png)
+
+
+Buy Transaction Details:
+https://rinkeby.etherscan.io/tx/0x52972271261b7bc93c80d7e22435faaebfd3d676edf01db03fdb0254cc2e1051
+https://rinkeby.etherscan.io/tx/0xbcacadc2b0974ceb919b9b32c3ed69c3ac97226ff0e6301a52591e4544c99606
+https://rinkeby.etherscan.io/tx/0xa02624f0c975a46e464cb00cae68bb0c975727ed0dc86feb4fa90d4c044c6ae0
+https://rinkeby.etherscan.io/tx/0xea910aed1cf7bb231d282a337cd8dae57764c46a6ef7de0f70e3c2c7e25f6559
+
+When a house is sold, this will be reflected to the estate properties
+![image1](./images/sold_house.png)
+
 
 
 ## ZoKrates proof generation (zk-SNARKs)
