@@ -35,7 +35,10 @@ contract('SolnSquareVerifier', accounts => {
                 proof.H,
                 proof.K,
                 input,
-                {from: account_one});
+                {from: account_one})
+
+            let owner = await this.contract.ownerOf(123);
+            assert.equal(owner, account_two, "expected owner does not match");
         });
 
         // Test if a new solution can be added for contract - SolnSquareVerifier
