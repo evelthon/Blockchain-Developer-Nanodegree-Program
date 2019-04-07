@@ -9,7 +9,7 @@ const proof7 = require('./proofs/proof7')
 
 var SquareVerifier = artifacts.require('SquareVerifier');
 
-var ERC721MintableComplete = artifacts.require('SolnSquareVerifier');
+var ERC721MintableComplete = artifacts.require('CustomERC721Token');
 
 contract('TestERC721Mintable', accounts => {
 
@@ -31,18 +31,18 @@ contract('TestERC721Mintable', accounts => {
 
             try {
                 // await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_two})
-                await this.contract.mintVerifiedTokenTo(
+                await this.contract.mint(
                     account_two,
                     123,
-                    proof.proof.A,
-                    proof.proof.A_p,
-                    proof.proof.B,
-                    proof.proof.B_p,
-                    proof.proof.C,
-                    proof.proof.C_p,
-                    proof.proof.H,
-                    proof.proof.K,
-                    proof.input,
+                    // proof.proof.A,
+                    // proof.proof.A_p,
+                    // proof.proof.B,
+                    // proof.proof.B_p,
+                    // proof.proof.C,
+                    // proof.proof.C_p,
+                    // proof.proof.H,
+                    // proof.proof.K,
+                    // proof.input,
                     {from: account_two});
             } catch (e) {
                 reverted = true;
@@ -94,18 +94,18 @@ contract('TestERC721Mintable', accounts => {
             let sqVerifier = await SquareVerifier.new({from: account_one});
             this.contract = await ERC721MintableComplete.new(sqVerifier.address, {from: account_one});
             // await this.contract.mintVerifiedTokenTo(account_two, 123, {from: account_one})
-            await this.contract.mintVerifiedTokenTo(
+            await this.contract.mint(
                 account_two,
                 123,
-                proof2.proof.A,
-                proof2.proof.A_p,
-                proof2.proof.B,
-                proof2.proof.B_p,
-                proof2.proof.C,
-                proof2.proof.C_p,
-                proof2.proof.H,
-                proof2.proof.K,
-                proof2.input,
+                // proof2.proof.A,
+                // proof2.proof.A_p,
+                // proof2.proof.B,
+                // proof2.proof.B_p,
+                // proof2.proof.C,
+                // proof2.proof.C_p,
+                // proof2.proof.H,
+                // proof2.proof.K,
+                // proof2.input,
                 {from: account_one});
 
         });
@@ -150,74 +150,74 @@ contract('TestERC721Mintable', accounts => {
 
             // TODO: mint multiple tokens
             // await this.contract.mintVerifiedTokenTo(account_two, 0, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(
+            await this.contract.mint(
                 account_two,
                 0,
-                proof3.proof.A,
-                proof3.proof.A_p,
-                proof3.proof.B,
-                proof3.proof.B_p,
-                proof3.proof.C,
-                proof3.proof.C_p,
-                proof3.proof.H,
-                proof3.proof.K,
-                proof3.input,
+                // proof3.proof.A,
+                // proof3.proof.A_p,
+                // proof3.proof.B,
+                // proof3.proof.B_p,
+                // proof3.proof.C,
+                // proof3.proof.C_p,
+                // proof3.proof.H,
+                // proof3.proof.K,
+                // proof3.input,
                 {from: account_one});
             // await this.contract.mintVerifiedTokenTo(account_three, 1, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(
+            await this.contract.mint(
                 account_three,
                 1,
-                proof4.proof.A,
-                proof4.proof.A_p,
-                proof4.proof.B,
-                proof4.proof.B_p,
-                proof4.proof.C,
-                proof4.proof.C_p,
-                proof4.proof.H,
-                proof4.proof.K,
-                proof4.input,
+                // proof4.proof.A,
+                // proof4.proof.A_p,
+                // proof4.proof.B,
+                // proof4.proof.B_p,
+                // proof4.proof.C,
+                // proof4.proof.C_p,
+                // proof4.proof.H,
+                // proof4.proof.K,
+                // proof4.input,
                 {from: account_one});
             // await this.contract.mintVerifiedTokenTo(account_four, 2, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(
+            await this.contract.mint(
                 account_four,
                 2,
-                proof5.proof.A,
-                proof5.proof.A_p,
-                proof5.proof.B,
-                proof5.proof.B_p,
-                proof5.proof.C,
-                proof5.proof.C_p,
-                proof5.proof.H,
-                proof5.proof.K,
-                proof5.input,
+                // proof5.proof.A,
+                // proof5.proof.A_p,
+                // proof5.proof.B,
+                // proof5.proof.B_p,
+                // proof5.proof.C,
+                // proof5.proof.C_p,
+                // proof5.proof.H,
+                // proof5.proof.K,
+                // proof5.input,
                 {from: account_one});
             // await this.contract.mintVerifiedTokenTo(account_five, 3, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(
+            await this.contract.mint(
                 account_five,
                 3,
-                proof6.proof.A,
-                proof6.proof.A_p,
-                proof6.proof.B,
-                proof6.proof.B_p,
-                proof6.proof.C,
-                proof6.proof.C_p,
-                proof6.proof.H,
-                proof6.proof.K,
-                proof6.input,
+                // proof6.proof.A,
+                // proof6.proof.A_p,
+                // proof6.proof.B,
+                // proof6.proof.B_p,
+                // proof6.proof.C,
+                // proof6.proof.C_p,
+                // proof6.proof.H,
+                // proof6.proof.K,
+                // proof6.input,
                 {from: account_one});
             // await this.contract.mintVerifiedTokenTo(account_six, 4, {from: account_one});
-            await this.contract.mintVerifiedTokenTo(
+            await this.contract.mint(
                 account_six,
                 4,
-                proof7.proof.A,
-                proof7.proof.A_p,
-                proof7.proof.B,
-                proof7.proof.B_p,
-                proof7.proof.C,
-                proof7.proof.C_p,
-                proof7.proof.H,
-                proof7.proof.K,
-                proof7.input,
+                // proof7.proof.A,
+                // proof7.proof.A_p,
+                // proof7.proof.B,
+                // proof7.proof.B_p,
+                // proof7.proof.C,
+                // proof7.proof.C_p,
+                // proof7.proof.H,
+                // proof7.proof.K,
+                // proof7.input,
                 {from: account_one});
         })
 
