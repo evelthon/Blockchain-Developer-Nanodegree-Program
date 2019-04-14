@@ -1,6 +1,7 @@
+
 # Blockchain-Developer-Nanodegree-Program
 Project assignments for Udacity's Blockchain Developer Nanodegree Program
-
+![image1](./images/blockchain.png)
 ## Project 1: Managing your Blockchain Identity
 Learn to create your identity on the Blockchain and interact with an existing web service.
 
